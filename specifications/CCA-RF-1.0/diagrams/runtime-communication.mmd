@@ -1,0 +1,18 @@
+flowchart LR
+  subgraph required["Required collaboration"]
+    component["Component"]
+    injector["Dependency Injector"]
+    collaborator["Required Collaborator"]
+    component -->|"declares dependency"| injector
+    injector -->|"supplies collaborator"| component
+    injector --> collaborator
+  end
+
+  subgraph asynchronous["Asynchronous communication"]
+    producer["Producer"]
+    bus["Event Bus"]
+    consumer["Consumer"]
+    producer -->|"publish asynchronously"| bus
+    bus -->|"deliver asynchronously"| consumer
+  end
+

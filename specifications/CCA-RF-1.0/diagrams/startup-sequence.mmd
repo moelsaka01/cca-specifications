@@ -1,0 +1,31 @@
+sequenceDiagram
+  participant Host as cca-runtime
+  participant LM as Lifecycle Manager
+  participant CM as Configuration Manager
+  participant SR as Service Registry
+  participant DI as Dependency Injector
+  participant Providers as Service Providers
+
+  Host->>LM: Construct instance
+  LM->>LM: Constructed → Initializing
+  LM->>LM: Configuring
+  LM->>CM: Apply explicit configuration
+  CM-->>LM: Configuration validated
+  LM->>LM: Registering Services
+  LM->>SR: Register typed internal providers
+  SR-->>LM: Registrations validated
+  LM->>LM: Resolving Dependencies
+  LM->>DI: Build and resolve dependency graph
+  DI-->>LM: Dependency levels
+  LM->>LM: Validating
+  LM->>LM: Runtime Freeze
+  LM->>LM: Starting
+
+  loop Sequential dependency levels
+    LM->>Providers: Start next dependency level
+    Note over Providers: Same-level Providers MAY start concurrently
+    Providers-->>LM: Dependency level started
+  end
+
+  LM->>LM: Running
+  LM-->>Host: Instance running

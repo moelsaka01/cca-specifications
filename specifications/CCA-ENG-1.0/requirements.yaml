@@ -1,0 +1,12 @@
+metadata:
+  specification_id: CCA-ENG-1.0
+  title: CCA Engineering Handbook
+  version: "1.0"
+  publication: published
+  publication_date: "2026-07-26"
+  scope: engineering governance
+  note: >-
+    This registry is intentionally empty. The publication scope authorizes
+    requirement records only for the Runtime Foundation specification.
+
+requirements: []

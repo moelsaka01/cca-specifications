@@ -1,0 +1,46 @@
+flowchart TB
+  subgraph L5["L5 — Applications"]
+    applications["Applications"]
+  end
+
+  subgraph L4["L4 — Domain Engines"]
+    domain_engines["Domain Engines"]
+    representation["Representation"]
+    process["Process"]
+    persistence["Persistence"]
+    domain_engines --- representation
+    domain_engines --- process
+    domain_engines --- persistence
+  end
+
+  subgraph L3["L3 — Runtime Foundation"]
+    runtime_foundation["Runtime Foundation"]
+    lifecycle_manager["Lifecycle Manager"]
+    service_registry["Service Registry"]
+    dependency_injector["Dependency Injector"]
+    event_bus["Event Bus"]
+    configuration_manager["Configuration Manager"]
+    observability["Observability"]
+    runtime_foundation --- lifecycle_manager
+    runtime_foundation --- service_registry
+    runtime_foundation --- dependency_injector
+    runtime_foundation --- event_bus
+    runtime_foundation --- configuration_manager
+    runtime_foundation --- observability
+  end
+
+  subgraph L2["L2 — Platform Abstraction"]
+    platform_abstraction["Platform Abstraction"]
+  end
+
+  subgraph L1["L1 — Operating System"]
+    operating_system["Operating System"]
+  end
+
+  dependency_rule["Inter-layer rule: higher-numbered layers may depend on lower-numbered layers<br/>upward dependencies are prohibited"]
+
+  applications --> domain_engines
+  domain_engines --> runtime_foundation
+  runtime_foundation --> platform_abstraction
+  platform_abstraction --> operating_system
+  dependency_rule --- runtime_foundation

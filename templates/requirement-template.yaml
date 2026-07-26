@@ -1,0 +1,19 @@
+# Copy the example item into a standard's requirements catalog.
+# Governance: ../governance/README.md
+# ADR template: ../adrs/ADR-TEMPLATE.md
+# CCA-ENG: ../specifications/CCA-ENG-1.0/README.md
+# CCA-RF: ../specifications/CCA-RF-1.0/README.md
+requirements:
+  - id: "STANDARD-REQ-001"
+    title: "Concise requirement title"
+    requirement: >-
+      The conforming implementation MUST provide one observable, verifiable
+      behavior.
+    priority: "required"
+    stability: "draft"
+    verification:
+      - method: "automated-test"
+        evidence: "Path or durable reference to the expected evidence"
+    implementation_milestone: "unassigned"
+    status: "proposed"
+    adr: []

@@ -1,0 +1,17 @@
+flowchart LR
+  consumer["Consumer"]
+  typed_contract["Contract&lt;T&gt;"]
+  registry["Service Registry"]
+  provider["Internal Provider&lt;T&gt;"]
+
+  consumer -->|"resolve by type"| typed_contract
+  typed_contract --> registry
+  provider -->|"register by type"| registry
+
+  registry --> exactly_one["ExactlyOne"]
+  registry --> zero_or_one["ZeroOrOne"]
+  registry --> one_or_more["OneOrMore"]
+
+  type_rule["Compile-time typed contracts"] --- registry
+  string_rule["String lookup prohibited"] --- registry
+

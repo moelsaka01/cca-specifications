@@ -1,0 +1,39 @@
+stateDiagram-v2
+  [*] --> Constructed
+  Constructed --> Initializing
+  Initializing --> Configuring
+  Configuring --> RegisteringServices
+  RegisteringServices --> ResolvingDependencies
+  ResolvingDependencies --> Validating
+  Validating --> RuntimeFreeze
+  RuntimeFreeze --> Starting
+  Starting --> Running
+  Running --> Stopping
+  Stopping --> Stopped
+  Stopped --> Destroyed
+  Destroyed --> [*]
+
+  state "Registering Services" as RegisteringServices
+  state "Resolving Dependencies" as ResolvingDependencies
+  state "Runtime Freeze" as RuntimeFreeze
+
+  Initializing --> Failed: failure
+  Configuring --> Failed: failure
+  RegisteringServices --> Failed: failure
+  ResolvingDependencies --> Failed: failure
+  Validating --> Failed: failure
+  Starting --> Failed: failure
+  Running --> Failed: failure
+  Stopping --> Failed: failure
+  Failed --> Rollback
+  Rollback --> Destroyed
+
+  note right of RuntimeFreeze
+    Validated runtime structure
+    is immutable after freeze.
+  end note
+
+  note right of Failed
+    A lifecycle failure enters Failed.
+    Rollback performs deterministic cleanup.
+  end note

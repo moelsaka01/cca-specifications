@@ -1,0 +1,15 @@
+flowchart TB
+  dependency_graph["Build resolved dependency graph"]
+  validate["Validate graph"]
+  freeze["Runtime Freeze"]
+  level_zero["Dependency level 0<br/>services MAY start concurrently"]
+  level_one["Dependency level 1<br/>services MAY start concurrently"]
+  level_more["Dependency levels through N<br/>services MAY start concurrently"]
+  running["Running"]
+
+  dependency_graph --> validate
+  validate --> freeze
+  freeze --> level_zero
+  level_zero --> level_one
+  level_one --> level_more
+  level_more --> running

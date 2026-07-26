@@ -1,0 +1,21 @@
+sequenceDiagram
+  participant Host as cca-runtime
+  participant LM as Lifecycle Manager
+  participant Dependent as Dependent
+  participant Provider as Provider
+
+  Host->>LM: Stop instance
+  LM->>LM: Running → Stopping
+
+  loop Reverse dependency order
+    LM->>Dependent: Stop dependent
+    Dependent-->>LM: Dependent stopped
+    LM->>Provider: Stop provider after dependents
+    Provider-->>LM: Provider stopped
+  end
+
+  LM->>LM: Stopped
+  Host->>LM: Destroy instance
+  LM->>LM: Destroyed
+  LM-->>Host: Deterministic cleanup complete
+

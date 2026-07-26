@@ -1,0 +1,595 @@
+metadata:
+  specification_id: CCA-RF-1.0
+  title: CCA Runtime Foundation Standard
+  version: "1.0"
+  publication: published
+  publication_date: "2026-07-26"
+  scope: Runtime Foundation
+
+requirements:
+  - id: CCA-RF-001
+    title: Single Runtime Foundation boundary
+    requirement: >-
+      The CCA architecture MUST define one coherent Runtime Foundation
+      boundary at Layer 3.
+    priority: required
+    stability: stable
+    verification:
+      - method: architecture_review
+        evidence: The published architecture identifies one Runtime Foundation boundary at Layer 3.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-002
+
+  - id: CCA-RF-002
+    title: Architecture-first contracts
+    requirement: >-
+      Runtime Foundation contracts and responsibilities MUST be published
+      independently of implementation mechanisms.
+    priority: required
+    stability: stable
+    verification:
+      - method: documentation_review
+        evidence: Published contracts state architectural responsibilities without depending on implementation mechanisms.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-002
+
+  - id: CCA-RF-003
+    title: Deterministic boundary outcomes
+    requirement: >-
+      Equivalent explicitly declared Runtime inputs and initial conditions
+      MUST produce equivalent documented outcomes.
+    priority: required
+    stability: stable
+    verification:
+      - method: conformance_test
+        evidence: Repeated equivalent cases produce equivalent documented outcomes.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-008
+
+  - id: CCA-RF-004
+    title: Dependency Injection for required collaboration
+    requirement: >-
+      Runtime components MUST use Dependency Injection for required
+      collaboration.
+    priority: required
+    stability: stable
+    verification:
+      - method: architecture_review
+        evidence: Every required collaboration is represented as an injected dependency.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-005
+
+  - id: CCA-RF-005
+    title: No mutable global state
+    requirement: >-
+      Runtime Foundation behavior and dependency access MUST NOT rely on
+      mutable global state.
+    priority: required
+    stability: stable
+    verification:
+      - method: implementation_review
+        evidence: Runtime behavior and dependency access contain no mutable global state.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-001
+
+  - id: CCA-RF-006
+    title: Explicit lifecycle contract
+    requirement: >-
+      The Runtime MUST publish and enforce its approved lifecycle contract.
+    priority: required
+    stability: stable
+    verification:
+      - method: conformance_review
+        evidence: Published lifecycle documentation and transition evidence match the approved lifecycle.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-003
+
+  - id: CCA-RF-007
+    title: Service Contract resolution
+    requirement: >-
+      The Service Registry MUST resolve Service Contracts.
+    priority: required
+    stability: stable
+    verification:
+      - method: conformance_test
+        evidence: Registry resolution requests and results are expressed in terms of Service Contracts.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-004
+
+  - id: CCA-RF-008
+    title: Explicit Event Bus boundary
+    requirement: >-
+      Runtime event communication MUST pass through the Event Bus boundary.
+    priority: required
+    stability: stable
+    verification:
+      - method: architecture_review
+        evidence: Runtime event communication is represented through the Event Bus.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-005
+
+  - id: CCA-RF-009
+    title: Documented configuration model
+    requirement: >-
+      The Runtime programming model MUST document configuration interaction
+      with the Configuration Manager.
+    priority: required
+    stability: stable
+    verification:
+      - method: documentation_review
+        evidence: Programming-model documentation describes configuration interaction with the Configuration Manager.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-002
+
+  - id: CCA-RF-010
+    title: Documented observability model
+    requirement: >-
+      The Runtime programming model MUST document interaction with
+      Observability.
+    priority: required
+    stability: stable
+    verification:
+      - method: documentation_review
+        evidence: Programming-model documentation describes interaction with Observability.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-002
+
+  - id: CCA-RF-011
+    title: Runtime API philosophy
+    requirement: >-
+      The Runtime programming model MUST publish its Runtime API philosophy.
+    priority: required
+    stability: stable
+    verification:
+      - method: documentation_review
+        evidence: The Runtime programming model contains a distinct Runtime API philosophy.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-001
+
+  - id: CCA-RF-012
+    title: Conformance evidence
+    requirement: >-
+      A CCA-RF-1.0 conformance claim MUST provide evidence for every approved
+      Runtime Foundation requirement and architecture decision.
+    priority: required
+    stability: stable
+    verification:
+      - method: conformance_audit
+        evidence: The conformance record maps evidence to every approved requirement and ADR-003-001 through ADR-003-008.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-001
+      - ADR-003-002
+      - ADR-003-003
+      - ADR-003-004
+      - ADR-003-005
+      - ADR-003-006
+      - ADR-003-007
+      - ADR-003-008
+
+  - id: CCA-RF-013
+    title: Headless Runtime
+    requirement: >-
+      The Runtime MUST operate headlessly.
+    priority: required
+    stability: stable
+    verification:
+      - method: conformance_test
+        evidence: The Runtime starts and operates without a user-interface host.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-001
+
+  - id: CCA-RF-014
+    title: Official Runtime host
+    requirement: >-
+      The official Runtime host MUST be named cca-runtime.
+    priority: required
+    stability: stable
+    verification:
+      - method: artifact_inspection
+        evidence: The official Runtime host artifact is named cca-runtime.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-001
+
+  - id: CCA-RF-015
+    title: Multiple Runtime instances
+    requirement: >-
+      The Runtime host MUST support multiple Runtime instances.
+    priority: required
+    stability: stable
+    verification:
+      - method: conformance_test
+        evidence: One Runtime host creates and operates more than one Runtime instance.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-001
+
+  - id: CCA-RF-016
+    title: Independent execution contexts
+    requirement: >-
+      Each Runtime instance MUST own an independent execution context.
+    priority: required
+    stability: stable
+    verification:
+      - method: isolation_test
+        evidence: Each tested Runtime instance owns a distinct execution context.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-001
+
+  - id: CCA-RF-017
+    title: No global Runtime singleton
+    requirement: >-
+      The Runtime MUST NOT be implemented as a global singleton.
+    priority: required
+    stability: stable
+    verification:
+      - method: implementation_review
+        evidence: Runtime construction and access expose no global singleton.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-001
+
+  - id: CCA-RF-018
+    title: Exact Runtime Foundation components
+    requirement: >-
+      The Runtime Foundation MUST contain exactly Lifecycle Manager, Service
+      Registry, Dependency Injector, Event Bus, Configuration Manager, and
+      Observability.
+    priority: required
+    stability: stable
+    verification:
+      - method: architecture_review
+        evidence: The Runtime Foundation component inventory contains the six approved components and no others.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-002
+
+  - id: CCA-RF-019
+    title: Canonical CCA layer model
+    requirement: >-
+      The CCA layer model MUST be Layer 5 Applications; Layer 4 Domain Engines
+      comprising Representation, Process, and Persistence; Layer 3 Runtime
+      Foundation; Layer 2 Platform Abstraction; and Layer 1 Operating System.
+    priority: required
+    stability: stable
+    verification:
+      - method: architecture_review
+        evidence: Published architecture and diagrams contain the five approved layers and the three approved Domain Engines.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-002
+
+  - id: CCA-RF-020
+    title: Inter-layer dependency direction
+    requirement: >-
+      Every inter-layer dependency MUST originate in a higher-numbered layer
+      and target a lower-numbered layer; a lower-numbered layer MUST NOT depend
+      on a higher-numbered layer.
+    priority: required
+    stability: stable
+    verification:
+      - method: dependency_review
+        evidence: Every inter-layer dependency points from a higher-numbered layer to a lower-numbered layer, with no upward dependency.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-002
+
+  - id: CCA-RF-021
+    title: Normal Runtime lifecycle sequence
+    requirement: >-
+      The normal Runtime lifecycle MUST follow Constructed, Initializing,
+      Configuring, Registering Services, Resolving Dependencies, Validating,
+      Runtime Freeze, Starting, Running, Stopping, Stopped, and Destroyed in
+      that order.
+    priority: required
+    stability: stable
+    verification:
+      - method: lifecycle_test
+        evidence: A successful Runtime execution observes the approved lifecycle states in the approved order.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-003
+
+  - id: CCA-RF-022
+    title: Runtime immutability after Freeze
+    requirement: >-
+      The Runtime MUST be immutable after Runtime Freeze.
+    priority: required
+    stability: stable
+    verification:
+      - method: lifecycle_test
+        evidence: Attempts to mutate frozen Runtime structure are rejected after Runtime Freeze.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-003
+
+  - id: CCA-RF-023
+    title: Freeze before service startup
+    requirement: >-
+      Runtime Freeze MUST complete before service startup begins.
+    priority: required
+    stability: stable
+    verification:
+      - method: lifecycle_test
+        evidence: Runtime Freeze completes before the first service startup action.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-003
+
+  - id: CCA-RF-024
+    title: Compile-time type-safe service resolution
+    requirement: >-
+      Service Registry resolution MUST be compile-time type-safe.
+    priority: required
+    stability: stable
+    verification:
+      - method: compile_time_test
+        evidence: Incompatible Service Contract resolution is rejected at compile time.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-004
+
+  - id: CCA-RF-025
+    title: No string-based service lookup
+    requirement: >-
+      The Service Registry MUST NOT support string-based service lookup.
+    priority: required
+    stability: stable
+    verification:
+      - method: interface_review
+        evidence: No Service Registry resolution interface accepts a string service identifier.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-004
+
+  - id: CCA-RF-026
+    title: Internal Providers
+    requirement: >-
+      Service Providers MUST remain internal to the Runtime Foundation.
+    priority: required
+    stability: stable
+    verification:
+      - method: architecture_review
+        evidence: Published boundaries expose Service Contracts while keeping Providers internal.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-004
+
+  - id: CCA-RF-027
+    title: Contract provider cardinality
+    requirement: >-
+      Every Service Contract MUST declare its provider cardinality.
+    priority: required
+    stability: stable
+    verification:
+      - method: contract_review
+        evidence: Every registered Service Contract contains an explicit provider cardinality.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-004
+
+  - id: CCA-RF-028
+    title: Supported provider cardinalities
+    requirement: >-
+      Service Contract provider cardinality MUST be ExactlyOne, ZeroOrOne, or
+      OneOrMore.
+    priority: required
+    stability: stable
+    verification:
+      - method: contract_test
+        evidence: Contract validation accepts the three approved cardinalities and rejects other cardinality values.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-004
+
+  - id: CCA-RF-029
+    title: Event Bus asynchronous notification
+    requirement: >-
+      Runtime components MUST use the Event Bus for asynchronous notification.
+    priority: required
+    stability: stable
+    verification:
+      - method: architecture_review
+        evidence: Asynchronous Runtime notifications are represented through the Event Bus.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-005
+
+  - id: CCA-RF-030
+    title: Startup dependency graph
+    requirement: >-
+      The complete service startup dependency graph MUST be computed before
+      service startup begins.
+    priority: required
+    stability: stable
+    verification:
+      - method: startup_test
+        evidence: Startup evidence shows graph computation completes before the first service startup action.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-006
+
+  - id: CCA-RF-031
+    title: Sequential startup dependency levels
+    requirement: >-
+      Service startup dependency levels MUST execute sequentially.
+    priority: required
+    stability: stable
+    verification:
+      - method: startup_test
+        evidence: Every dependency level completes before the next dependency level begins.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-006
+
+  - id: CCA-RF-032
+    title: Optional same-level startup concurrency
+    requirement: >-
+      Services within one startup dependency level MAY execute concurrently.
+    priority: required
+    stability: stable
+    verification:
+      - method: architecture_review
+        evidence: The startup model permits but does not require concurrent execution within one dependency level.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-006
+
+  - id: CCA-RF-033
+    title: Reverse dependency shutdown
+    requirement: >-
+      Runtime shutdown MUST stop each dependent service before the service
+      providers on which it depends.
+    priority: required
+    stability: stable
+    verification:
+      - method: shutdown_test
+        evidence: Every shutdown dependency edge is traversed in reverse, with dependents stopped before their providers.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-007
+
+  - id: CCA-RF-034
+    title: Explicit Failed state
+    requirement: >-
+      Runtime lifecycle failure MUST enter the explicit Failed state.
+    priority: required
+    stability: stable
+    verification:
+      - method: failure_test
+        evidence: An induced lifecycle failure enters Failed.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-008
+
+  - id: CCA-RF-035
+    title: Failure Rollback
+    requirement: >-
+      The Runtime MUST transition from Failed to Rollback.
+    priority: required
+    stability: stable
+    verification:
+      - method: failure_test
+        evidence: Failure-path evidence records Failed followed by Rollback.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-008
+
+  - id: CCA-RF-036
+    title: Deterministic failure cleanup
+    requirement: >-
+      Rollback MUST perform deterministic cleanup and terminate in Destroyed.
+    priority: required
+    stability: stable
+    verification:
+      - method: failure_test
+        evidence: Equivalent failure cases perform equivalent cleanup and complete in Destroyed.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-008
+
+  - id: CCA-RF-037
+    title: Service registration documentation
+    requirement: >-
+      The Runtime programming model MUST document service registration.
+    priority: required
+    stability: stable
+    verification:
+      - method: documentation_review
+        evidence: The programming model contains a distinct service registration section.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-004
+
+  - id: CCA-RF-038
+    title: Dependency declaration documentation
+    requirement: >-
+      The Runtime programming model MUST document dependency declaration.
+    priority: required
+    stability: stable
+    verification:
+      - method: documentation_review
+        evidence: The programming model contains a distinct dependency declaration section.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-005
+
+  - id: CCA-RF-039
+    title: Error reporting documentation
+    requirement: >-
+      The Runtime programming model MUST document error reporting.
+    priority: required
+    stability: stable
+    verification:
+      - method: documentation_review
+        evidence: The programming model contains a distinct error reporting section.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-008
+
+  - id: CCA-RF-040
+    title: Thread-safety documentation
+    requirement: >-
+      The Runtime programming model MUST document thread safety.
+    priority: required
+    stability: stable
+    verification:
+      - method: documentation_review
+        evidence: The programming model contains a distinct thread-safety section.
+    implementation_milestone: IM-003
+    status: approved
+    adr:
+      - ADR-003-006
