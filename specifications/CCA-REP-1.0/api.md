@@ -1,323 +1,464 @@
 ---
 id: API-001
 title: Representation Public API
-version: 1.0.0
+version: 2.0.0
 status: Draft
-derived_from: SP-002
+derived_from:
+  - SP-002
+  - RR-001
 ---
 
 # API-001 Representation Public API
 
-## 1. Purpose
+## Purpose
 
-This document defines the public API contract for the CCA Representation Foundation.
+This document defines the normative public C++ API for the Representation Foundation.
 
-It specifies the public concepts and services that every conforming implementation shall expose.
+It specifies the public types, operations, ownership model, diagnostics, and behavioral contracts required by all conforming implementations.
 
-This document intentionally does not prescribe internal data structures or storage mechanisms.
+Internal implementation is intentionally unspecified.
 
 ---
 
-# 2. Namespace
-
-The public namespace shall be:
+# Namespace
 
 ```cpp
-cca::representation
+namespace cca::representation
 ```
 
-All public types belong to this namespace.
-
 ---
 
-# 3. Public Types
+# Common Types
 
-## RepresentationDocument
+```cpp
+using EntityCollection =
+    std::vector<std::reference_wrapper<const RepresentationEntity>>;
 
-### Purpose
+using RelationshipCollection =
+    std::vector<std::reference_wrapper<const RepresentationRelationship>>;
 
-Represents the root of a semantic representation.
-
-### Responsibilities
-
-- Own all entities
-- Own all relationships
-- Own document metadata
-- Control document lifecycle
-
-### Public Operations
-
-- Create entity
-- Remove entity
-- Create relationship
-- Remove relationship
-- Enumerate entities
-- Enumerate relationships
-- Retrieve metadata
-
----
-
-## RepresentationEntity
-
-### Purpose
-
-Represents a semantic object.
-
-### Responsibilities
-
-- Maintain immutable identity
-- Expose semantic type
-- Own properties
-
-### Public Operations
-
-- Identifier
-- Type
-- Properties
-
----
-
-## RepresentationRelationship
-
-### Purpose
-
-Represents a semantic relationship between two entities.
-
-### Responsibilities
-
-- Maintain immutable identity
-- Connect exactly two entities
-- Own properties
-- Expose semantic type
-
-### Public Operations
-
-- Source entity
-- Target entity
-- Type
-- Properties
-
----
-
-## RepresentationProperty
-
-### Purpose
-
-Represents a named semantic attribute.
-
-### Components
-
-- Name
-- Type
-- Value
-
----
-
-## RepresentationType
-
-Represents semantic classification.
-
-Every semantic object shall expose exactly one RepresentationType.
-
----
-
-## RepresentationValue
-
-Represents a strongly typed semantic value.
-
-Supported categories include:
-
-- Boolean
-- Integer
-- Floating Point
-- String
-- Enumeration
-- Identifier
-- Collection
-
----
-
-## RepresentationMetadata
-
-Represents descriptive information associated with a document.
-
-Examples include:
-
-- Author
-- Version
-- Timestamp
-- Provenance
-
----
-
-## RepresentationId
-
-Represents an immutable identifier.
-
-Identifiers shall:
-
-- remain immutable
-- remain unique within a document
-- never be reused
-
----
-
-# 4. Public Services
-
-## ValidationService
-
-Responsibilities
-
-- Validate property
-- Validate entity
-- Validate relationship
-- Validate document
-
-Validation shall not modify semantic state.
-
----
-
-## QueryService
-
-Responsibilities
-
-- Lookup by identifier
-- Lookup by type
-- Enumerate entities
-- Enumerate relationships
-- Execute deterministic read-only queries
-
-Queries shall have no side effects.
-
----
-
-## TransactionService
-
-Responsibilities
-
-- Begin transaction
-- Commit transaction
-- Rollback transaction
-
-Commit shall validate semantic consistency.
-
-Rollback shall restore the previous consistent state.
-
----
-
-## FreezeService
-
-Responsibilities
-
-- Freeze validated documents
-
-Frozen documents become immutable.
-
----
-
-# 5. Document Lifecycle
-
-Every RepresentationDocument shall support the following lifecycle.
-
-```
-Mutable
-   │
-   ▼
-Validated
-   │
-   ▼
-Frozen
+using PropertyCollection =
+    std::vector<std::reference_wrapper<const RepresentationProperty>>;
 ```
 
-No semantic modification is permitted after freezing.
+Collections shall preserve insertion order.
 
 ---
 
-# 6. Ownership Rules
+# RepresentationId
 
-RepresentationDocument owns:
+```cpp
+class RepresentationId
+{
+public:
 
-- Entities
-- Relationships
-- Metadata
+    static RepresentationId generate();
 
-RepresentationEntity owns:
+    std::string toString() const;
 
-- Properties
+    bool operator==(const RepresentationId&) const;
 
-RepresentationRelationship owns:
+    bool operator!=(const RepresentationId&) const;
 
-- Properties
+    bool operator<(const RepresentationId&) const;
 
-Ownership is exclusive.
+private:
 
----
+    /* implementation-defined */
 
-# 7. Identity Rules
+};
+```
 
-Every semantic object shall possess exactly one immutable RepresentationId.
+Identifiers are immutable.
 
-Identifiers shall never change after object creation.
+Identifiers are never reused.
 
----
-
-# 8. Validation Rules
-
-Validation shall:
-
-- be deterministic
-- be repeatable
-- produce diagnostics
-- never modify semantic state
+Rolled-back identifiers remain retired.
 
 ---
 
-# 9. Transaction Rules
+# RepresentationType
 
-Transactions shall:
+```cpp
+class RepresentationType
+{
+public:
 
-- preserve consistency
-- support rollback
-- validate before commit
+    std::string name() const;
 
----
-
-# 10. Query Rules
-
-Queries shall:
-
-- be deterministic
-- be read-only
-- expose public semantics only
-
-Internal indexing is implementation-defined.
+    bool operator==(const RepresentationType&) const;
+};
+```
 
 ---
 
-# 11. Implementation Freedom
+# RepresentationValue
 
-Implementations may choose any internal architecture, including:
+Supported value kinds:
 
-- object graphs
-- adjacency lists
-- hash maps
-- indexes
-- arenas
+```cpp
+enum class ValueKind
+{
+    Boolean,
+    Integer,
+    FloatingPoint,
+    String,
+    Enumeration,
+    Identifier,
+    Collection
+};
+```
 
-provided the public API contract remains unchanged.
+Public API:
+
+```cpp
+class RepresentationValue
+{
+public:
+
+    ValueKind kind() const;
+
+    bool asBoolean() const;
+
+    int64_t asInteger() const;
+
+    double asFloatingPoint() const;
+
+    std::string asString() const;
+
+    RepresentationId asIdentifier() const;
+
+    std::vector<RepresentationValue> asCollection() const;
+};
+```
+
+Calling an incompatible accessor shall throw
+`std::bad_variant_access`.
 
 ---
 
-# 12. Out of Scope
+# RepresentationProperty
 
-The public API shall not expose:
+```cpp
+class RepresentationProperty
+{
+public:
 
-- Runtime execution
-- Persistence
-- Serialization
-- Networking
-- User interface
-- Artificial Intelligence
-- Process execution
+    const RepresentationId& id() const;
 
-These capabilities belong to later milestones.
+    std::string_view name() const;
+
+    const RepresentationType& type() const;
+
+    const RepresentationValue& value() const;
+};
+```
+
+---
+
+# RepresentationEntity
+
+```cpp
+class RepresentationEntity
+{
+public:
+
+    const RepresentationId& id() const;
+
+    const RepresentationType& type() const;
+
+    const PropertyCollection& properties() const;
+
+    const RepresentationProperty&
+    property(std::string_view name) const;
+};
+```
+
+---
+
+# RepresentationRelationship
+
+```cpp
+class RepresentationRelationship
+{
+public:
+
+    const RepresentationId& id() const;
+
+    const RepresentationType& type() const;
+
+    const RepresentationEntity& source() const;
+
+    const RepresentationEntity& target() const;
+
+    const PropertyCollection& properties() const;
+};
+```
+
+---
+
+# RepresentationMetadata
+
+```cpp
+class RepresentationMetadata
+{
+public:
+
+    std::string author() const;
+
+    std::string version() const;
+
+    std::string provenance() const;
+};
+```
+
+---
+
+# RepresentationDocument
+
+```cpp
+class RepresentationDocument
+{
+public:
+
+    RepresentationEntity&
+    createEntity(
+        const RepresentationType&);
+
+    RepresentationRelationship&
+    createRelationship(
+        RepresentationEntity& source,
+        RepresentationEntity& target,
+        const RepresentationType&);
+
+    void
+    removeEntity(
+        const RepresentationId&);
+
+    void
+    removeRelationship(
+        const RepresentationId&);
+
+    const EntityCollection&
+    entities() const;
+
+    const RelationshipCollection&
+    relationships() const;
+
+    const RepresentationMetadata&
+    metadata() const;
+
+    bool
+    isFrozen() const;
+};
+```
+
+The document owns all semantic objects.
+
+Returned references remain valid until:
+
+- removal
+- rollback
+- document destruction
+
+---
+
+# Diagnostics
+
+```cpp
+enum class DiagnosticSeverity
+{
+    Information,
+    Warning,
+    Error
+};
+
+enum class DiagnosticCode
+{
+    None,
+
+    DuplicateIdentifier,
+
+    MissingType,
+
+    DuplicateProperty,
+
+    InvalidRelationship,
+
+    FrozenDocument,
+
+    TransactionError,
+
+    ValidationError
+};
+
+struct Diagnostic
+{
+    DiagnosticCode code;
+
+    DiagnosticSeverity severity;
+
+    std::string message;
+};
+```
+
+Diagnostics shall be returned in deterministic order.
+
+---
+
+# Validation
+
+```cpp
+struct ValidationResult
+{
+    bool valid;
+
+    std::vector<Diagnostic> diagnostics;
+};
+```
+
+```cpp
+class ValidationService
+{
+public:
+
+    ValidationResult
+    validate(
+        const RepresentationDocument&) const;
+};
+```
+
+Validation never modifies semantic state.
+
+A successful validation does not change the document lifecycle.
+
+---
+
+# Transactions
+
+```cpp
+class Transaction
+{
+public:
+
+    void commit();
+
+    void rollback();
+
+    bool active() const;
+};
+```
+
+```cpp
+class TransactionService
+{
+public:
+
+    Transaction
+    begin(
+        RepresentationDocument&);
+};
+```
+
+Rules:
+
+- only one active transaction per document
+- nested transactions are not supported
+- failed commit leaves transaction active
+- rollback restores previous state
+- rolled-back identifiers remain retired
+
+---
+
+# Freeze
+
+```cpp
+class FreezeService
+{
+public:
+
+    ValidationResult
+    freeze(
+        RepresentationDocument&);
+};
+```
+
+Freeze performs:
+
+1. validation
+
+2. lifecycle transition
+
+If validation fails:
+
+the document remains mutable.
+
+If validation succeeds:
+
+the document becomes frozen.
+
+---
+
+# Query Service
+
+```cpp
+class QueryService
+{
+public:
+
+    const RepresentationEntity*
+    findEntity(
+        const RepresentationDocument&,
+        const RepresentationId&) const;
+
+    const RepresentationRelationship*
+    findRelationship(
+        const RepresentationDocument&,
+        const RepresentationId&) const;
+
+    EntityCollection
+    entitiesByType(
+        const RepresentationDocument&,
+        const RepresentationType&) const;
+};
+```
+
+Rules:
+
+- nullptr indicates "not found"
+- results preserve insertion order
+- queries never invalidate references
+- queries never modify semantic state
+
+---
+
+# Ownership Rules
+
+- RepresentationDocument owns all semantic objects.
+- Services own no semantic state.
+- Returned references remain valid until object removal, rollback, or document destruction.
+- Callers never own semantic objects.
+
+---
+
+# Thread Safety
+
+No thread-safety guarantees are provided.
+
+Concurrent access is outside the scope of IM-004.
+
+---
+
+# Exceptions
+
+Public API shall throw only standard C++ exceptions.
+
+No implementation-specific exception hierarchy shall be exposed.
+
+---
+
+# ABI
+
+Binary compatibility is not required for IM-004.
+
+Source compatibility is required within version 1.x.

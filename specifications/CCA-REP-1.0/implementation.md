@@ -1,192 +1,135 @@
 ---
 id: IS-004
 title: Representation Foundation Implementation Specification
-version: 1.0.0
+version: 1.1.0
 status: Draft
-derived_from:
-  - SP-002
-  - RR-001
-  - API-001
 ---
 
-# IS-004 Representation Foundation Implementation Specification
+# Purpose
 
-## 1. Purpose
+Implement the Representation Foundation exactly as defined by:
 
-This document defines the implementation scope for IM-004 Representation Foundation.
+- SP-002
+- RR-001
+- API-001
 
-The objective is to implement the semantic layer defined by SP-002 while satisfying every mandatory requirement in RR-001 and exposing the public API defined in API-001.
-
-This document is implementation-oriented.
+No architectural decisions may be introduced.
 
 ---
 
-# 2. Repository
+# Repository
 
-The implementation shall be added to:
+Implementation target:
 
-```
 repositories/cca-core/
-```
-
-The Representation Foundation shall be implemented as a standalone module.
 
 ---
 
-# 3. Repository Layout
+# Required Modules
 
-```
-include/
-    cca/
-        representation/
-
-src/
-    representation/
-
-tests/
-    representation/
-
-examples/
-    representation/
-
-docs/
-    representation/
-```
-
-The implementation shall follow the repository conventions established in IM-003.
-
----
-
-# 4. Public Components
-
-The following public concepts shall be implemented.
+Implement:
 
 - RepresentationDocument
 - RepresentationEntity
 - RepresentationRelationship
 - RepresentationProperty
-- RepresentationType
 - RepresentationValue
+- RepresentationType
 - RepresentationMetadata
 - RepresentationId
 
----
-
-# 5. Public Services
-
-Implement the following services.
+Implement services:
 
 - ValidationService
 - QueryService
 - TransactionService
 - FreezeService
 
-Services shall remain independent of runtime execution.
+---
+
+# Public API
+
+The implementation shall exactly match API-001.
+
+Public signatures shall not be changed.
 
 ---
 
-# 6. Internal Architecture
+# Internal Freedom
 
-Internal implementation is not prescribed.
+The following are implementation-defined:
 
-Acceptable implementation strategies include:
+- storage
+- indexing
+- allocation
+- lookup algorithms
+- containers
 
-- object graphs
-- adjacency lists
-- hash maps
-- indexes
-- arena allocation
-
-The chosen implementation shall preserve the public API contract.
+provided API-001 behavior remains unchanged.
 
 ---
 
-# 7. Unit Tests
+# Testing
 
-Unit tests shall be provided for:
+Every requirement in RR-001 shall map to at least one automated unit test.
 
-- identifiers
-- entities
-- relationships
-- properties
-- values
-- validation
-- transactions
-- queries
-- freeze lifecycle
+Required test suites:
 
-Every mandatory requirement in RR-001 shall be verified by at least one automated test.
-
----
-
-# 8. Documentation
-
-Provide:
-
-- API documentation
-- Developer guide
-- Usage examples
-- Architecture overview
-
-Documentation shall remain synchronized with the implementation.
+- Identity
+- Document
+- Entity
+- Relationship
+- Property
+- Value
+- Validation
+- Transaction
+- Freeze
+- Query
 
 ---
 
-# 9. Engineering Constraints
+# Build
 
 The implementation shall:
 
-- compile without warnings
+- compile successfully
+- compile warning-free
 - treat warnings as errors
-- preserve deterministic behavior
-- preserve immutable identifiers
-- avoid global mutable state
-- avoid circular dependencies
-- separate interface from implementation
 
 ---
 
-# 10. Out of Scope
+# Documentation
 
-The following capabilities shall not be implemented in IM-004.
+Produce:
 
-- Runtime execution
-- Process execution
-- Persistence
-- Serialization
-- Networking
-- Studio
-- SDK
-- Artificial Intelligence
-- MemoryOS
-
-These belong to later milestones.
+- API documentation
+- examples
+- architecture summary
 
 ---
 
-# 11. Acceptance Criteria
+# Deliverables
 
-Implementation is complete when:
+Implementation shall include:
 
-- All public API components are implemented.
-- All RR-001 mandatory requirements are satisfied.
-- All unit tests pass.
-- Public documentation is complete.
-- Examples compile successfully.
-- The implementation conforms to SP-002.
-- No architectural deviations exist.
+- public headers
+- source files
+- unit tests
+- documentation
+- examples
+
+No Git operations shall be performed.
 
 ---
 
-# 12. Deliverables
+# Stop Conditions
 
-The completed milestone shall include:
+If implementation cannot continue:
 
-- Public headers
-- Source implementation
-- Unit tests
-- Documentation
-- Examples
-- Conformance evidence
+Report:
 
-No Git history, tags, or release artifacts are required as part of this implementation.
+- affected specification
+- section
+- reason
+
+Do not invent new architecture.
