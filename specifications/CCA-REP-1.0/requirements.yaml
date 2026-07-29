@@ -1,0 +1,223 @@
+metadata:
+  id: RR-001
+  title: Representation Requirements
+  version: 1.0.0
+  status: Draft
+  derived_from: SP-002
+
+requirements:
+
+  - id: RR-ARCH-001
+    statement: Representation shall define semantic meaning only.
+    priority: mandatory
+    source: SP-002 Section 4
+
+  - id: RR-ARCH-002
+    statement: Representation shall remain passive and shall not execute runtime behavior.
+    priority: mandatory
+    source: SP-002 Section 4
+
+  - id: RR-ARCH-003
+    statement: Representation shall be deterministic.
+    priority: mandatory
+    source: SP-002 Section 4
+
+  - id: RR-ARCH-004
+    statement: Representation shall remain implementation independent.
+    priority: mandatory
+    source: SP-002 Section 4
+
+  - id: RR-DOC-001
+    statement: Every semantic model shall have exactly one RepresentationDocument.
+    priority: mandatory
+    source: SP-002 Section 5
+
+  - id: RR-DOC-002
+    statement: A RepresentationDocument shall own all entities, relationships, and metadata.
+    priority: mandatory
+    source: SP-002 Section 6
+
+  - id: RR-ENTITY-001
+    statement: Every RepresentationEntity shall belong to exactly one RepresentationDocument.
+    priority: mandatory
+    source: SP-002 Section 6
+
+  - id: RR-ENTITY-002
+    statement: Every RepresentationEntity shall possess exactly one semantic type.
+    priority: mandatory
+    source: SP-002 Section 10
+
+  - id: RR-REL-001
+    statement: Every RepresentationRelationship shall connect exactly two entities.
+    priority: mandatory
+    source: SP-002 Section 8
+
+  - id: RR-REL-002
+    statement: Every RepresentationRelationship shall possess its own identifier.
+    priority: mandatory
+    source: SP-002 Section 8
+
+  - id: RR-REL-003
+    statement: Every RepresentationRelationship shall possess its own semantic type.
+    priority: mandatory
+    source: SP-002 Section 8
+
+  - id: RR-PROP-001
+    statement: Every RepresentationProperty shall contain a name, type, and value.
+    priority: mandatory
+    source: SP-002 Section 9
+
+  - id: RR-PROP-002
+    statement: Property names shall be unique within their owner.
+    priority: mandatory
+    source: SP-002 Section 9
+
+  - id: RR-TYPE-001
+    statement: Every semantic object shall expose exactly one semantic type.
+    priority: mandatory
+    source: SP-002 Section 10
+
+  - id: RR-VALUE-001
+    statement: The Representation Foundation shall support Boolean values.
+    priority: mandatory
+    source: SP-002 Section 11
+
+  - id: RR-VALUE-002
+    statement: The Representation Foundation shall support Integer values.
+    priority: mandatory
+    source: SP-002 Section 11
+
+  - id: RR-VALUE-003
+    statement: The Representation Foundation shall support Floating Point values.
+    priority: mandatory
+    source: SP-002 Section 11
+
+  - id: RR-VALUE-004
+    statement: The Representation Foundation shall support String values.
+    priority: mandatory
+    source: SP-002 Section 11
+
+  - id: RR-VALUE-005
+    statement: The Representation Foundation shall support Enumeration values.
+    priority: mandatory
+    source: SP-002 Section 11
+
+  - id: RR-VALUE-006
+    statement: The Representation Foundation shall support Identifier values.
+    priority: mandatory
+    source: SP-002 Section 11
+
+  - id: RR-VALUE-007
+    statement: The Representation Foundation shall support Collection values.
+    priority: mandatory
+    source: SP-002 Section 11
+
+  - id: RR-ID-001
+    statement: Every semantic object shall possess exactly one immutable identifier.
+    priority: mandatory
+    source: SP-002 Section 7
+
+  - id: RR-ID-002
+    statement: Identifiers shall never change.
+    priority: mandatory
+    source: SP-002 Section 7
+
+  - id: RR-ID-003
+    statement: Identifiers shall never be reused.
+    priority: mandatory
+    source: SP-002 Section 7
+
+  - id: RR-VAL-001
+    statement: Validation shall be deterministic.
+    priority: mandatory
+    source: SP-002 Section 12
+
+  - id: RR-VAL-002
+    statement: Validation shall never modify semantic state.
+    priority: mandatory
+    source: SP-002 Section 12
+
+  - id: RR-VAL-003
+    statement: Validation shall produce structured diagnostics.
+    priority: mandatory
+    source: SP-002 Section 12
+
+  - id: RR-TXN-001
+    statement: Transactions shall support Begin.
+    priority: mandatory
+    source: SP-002 Section 13
+
+  - id: RR-TXN-002
+    statement: Transactions shall support Commit.
+    priority: mandatory
+    source: SP-002 Section 13
+
+  - id: RR-TXN-003
+    statement: Transactions shall support Rollback.
+    priority: mandatory
+    source: SP-002 Section 13
+
+  - id: RR-TXN-004
+    statement: Commit shall validate semantic consistency before completion.
+    priority: mandatory
+    source: SP-002 Section 13
+
+  - id: RR-TXN-005
+    statement: Rollback shall restore the previous consistent state.
+    priority: mandatory
+    source: SP-002 Section 13
+
+  - id: RR-QUERY-001
+    statement: Queries shall be read-only.
+    priority: mandatory
+    source: SP-002 Section 14
+
+  - id: RR-QUERY-002
+    statement: Queries shall have no side effects.
+    priority: mandatory
+    source: SP-002 Section 14
+
+  - id: RR-QUERY-003
+    statement: Queries shall hide implementation details.
+    priority: mandatory
+    source: SP-002 Section 14
+
+  - id: RR-FREEZE-001
+    statement: Frozen documents shall reject semantic modification.
+    priority: mandatory
+    source: SP-002 Section 15
+
+  - id: RR-FREEZE-002
+    statement: Frozen documents shall permit queries.
+    priority: mandatory
+    source: SP-002 Section 15
+
+  - id: RR-FREEZE-003
+    statement: Frozen documents shall permit validation.
+    priority: mandatory
+    source: SP-002 Section 15
+
+  - id: RR-SERVICE-001
+    statement: The Representation Foundation shall provide a ValidationService.
+    priority: mandatory
+    source: SP-002 Section 16
+
+  - id: RR-SERVICE-002
+    statement: The Representation Foundation shall provide a QueryService.
+    priority: mandatory
+    source: SP-002 Section 16
+
+  - id: RR-SERVICE-003
+    statement: The Representation Foundation shall provide a TransactionService.
+    priority: mandatory
+    source: SP-002 Section 16
+
+  - id: RR-SERVICE-004
+    statement: The Representation Foundation shall provide a FreezeService.
+    priority: mandatory
+    source: SP-002 Section 16
+
+  - id: RR-CONF-001
+    statement: All mandatory requirements shall be verified by automated tests.
+    priority: mandatory
+    source: SP-002 Section 19
