@@ -1,0 +1,598 @@
+metadata:
+  specification_id: CCA-PROC-1.0
+  title: CCA Process Foundation Standard
+  version: "1.0"
+  publication: draft
+  review_state: ready_for_independent_review
+  scope: Process Foundation
+  implementation_milestone: IM-005
+  normative_source: SP-003
+
+requirements:
+  - id: CCA-PROC-001
+    title: Process Foundation boundary
+    requirement: >-
+      The Process Foundation MUST be an L4 Domain Engine that consumes
+      CCA-REP-1.0 RepresentationDocument state and depends on CCA-RF-1.0
+      Runtime Foundation services.
+    priority: required
+    stability: stable
+    source: SP-003 Section 3
+    verification:
+      - method: architecture_review
+        evidence: The implementation architecture shows Process consuming Representation and depending downward on Runtime.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-002
+    title: Preserve canonical Runtime dependency direction
+    requirement: >-
+      The Process Foundation MUST NOT cause the Runtime Foundation to depend
+      upward on Process.
+    priority: required
+    stability: stable
+    source: SP-003 Section 3
+    verification:
+      - method: architecture_review
+        evidence: Dependency review finds no Runtime-to-Process dependency.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-003
+    title: No additional Runtime Foundation component
+    requirement: >-
+      ProcessEngine MUST remain an L4 service and MUST NOT be represented as a
+      seventh Runtime Foundation component.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 3 and 12
+    verification:
+      - method: architecture_review
+        evidence: Runtime composition retains exactly the six CCA-RF-1.0 components and hosts ProcessEngine as a Service Contract.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-004
+    title: Passive Representation input
+    requirement: >-
+      Process execution MUST observe RepresentationDocument state without
+      modifying the document, its semantic objects, or its Representation
+      lifecycle.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 4 and 6
+    verification:
+      - method: conformance_test
+        evidence: Complete semantic snapshots before and after definition construction and execution are equal.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-005
+    title: Deterministic Process outcomes
+    requirement: >-
+      Equivalent valid Representation state and equivalent initial execution
+      state MUST produce equivalent definitions, transitions, traces, results,
+      and diagnostics.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 4 and 13
+    verification:
+      - method: determinism_test
+        evidence: Repeated equivalent cases produce identical observable Process outcomes.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-006
+    title: No mutable global state
+    requirement: >-
+      Process behavior and dependency access MUST NOT rely on mutable global
+      state or a process-wide singleton.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 4 and 12
+    verification:
+      - method: implementation_review
+        evidence: Implementation review finds no mutable global Process state or singleton dependency access.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-007
+    title: Excluded subsystem boundary
+    requirement: >-
+      CCA-PROC-1.0 MUST NOT introduce scheduling, persistence, networking,
+      distributed execution, BPMN, workflow-engine behavior, MemoryOS, Studio,
+      Artificial Intelligence, plugins, user-defined actions, or code
+      generation.
+    priority: required
+    stability: stable
+    source: SP-003 Section 17
+    verification:
+      - method: scope_review
+        evidence: Public API, implementation, tests, and documentation contain none of the excluded subsystems.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-008
+    title: No implicit executable taxonomy
+    requirement: >-
+      Process execution MUST NOT assign action, condition, dependency, branch,
+      entry-point, or control-flow meaning to unspecified Representation
+      types, names, values, metadata, or relationships.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 4, 7, and 8
+    verification:
+      - method: semantic_neutrality_test
+        evidence: Inputs with varied valid semantic names, values, and relationship shapes preserve the same insertion-derived execution rule.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-009
+    title: RepresentationDocument input contract
+    requirement: >-
+      Direct Process execution MUST accept a const CCA-REP-1.0
+      RepresentationDocument reference as its input.
+    priority: required
+    stability: stable
+    source: SP-003 Section 6
+    verification:
+      - method: compile_time_test
+        evidence: The public execute signature accepts const RepresentationDocument by reference and the required example compiles.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-010
+    title: Read-only input validation
+    requirement: >-
+      The Process Foundation MUST validate a direct document input using
+      CCA-REP-1.0 read-only validation before materialization or execution.
+    priority: required
+    stability: stable
+    source: SP-003 Section 6
+    verification:
+      - method: validation_test
+        evidence: Valid and invalid document cases prove validation precedes definition materialization and execution.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-011
+    title: Representation lifecycle independence
+    requirement: >-
+      Process execution MUST accept valid observable document state regardless
+      of Mutable, internally Validated, or Frozen lifecycle and MUST NOT freeze
+      the input.
+    priority: required
+    stability: stable
+    source: SP-003 Section 6
+    verification:
+      - method: lifecycle_test
+        evidence: Equivalent valid mutable, validated, and frozen states produce equivalent results while lifecycle remains unchanged.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-012
+    title: Invalid direct input result
+    requirement: >-
+      ProcessEngine execute of an invalid RepresentationDocument MUST return a
+      Failed InvalidRepresentation result without throwing a domain-specific
+      exception.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 6 and 10
+    verification:
+      - method: validation_test
+        evidence: Invalid direct input returns the required terminal state, code, diagnostics, message, and empty trace.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-013
+    title: Invalid definition construction
+    requirement: >-
+      ProcessDefinition construction from an invalid RepresentationDocument
+      MUST throw std::invalid_argument and create no definition.
+    priority: required
+    stability: stable
+    source: SP-003 Section 7
+    verification:
+      - method: exception_test
+        evidence: Invalid constructor inputs consistently throw std::invalid_argument without observable mutation.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-014
+    title: Owned definition plan
+    requirement: >-
+      A successfully constructed ProcessDefinition MUST own copied
+      Representation identifiers and counts and MUST retain no reference,
+      pointer, view, or iterator into the source document.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 5 and 7
+    verification:
+      - method: ownership_test
+        evidence: Definition access and execution remain valid after source mutation and destruction.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-015
+    title: Definition source-lifetime independence
+    requirement: >-
+      Source document mutation, rollback, or destruction after materialization
+      MUST NOT change or invalidate an existing ProcessDefinition.
+    priority: required
+    stability: stable
+    source: SP-003 Section 7
+    verification:
+      - method: lifetime_test
+        evidence: A definition preserves its plan and executes after each specified source lifetime event.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-016
+    title: Canonical structural execution order
+    requirement: >-
+      Definition order and successful execution trace MUST visit entities and
+      their properties, then relationships and their properties, using the
+      exact CCA-REP-1.0 insertion-order rule in SP-003 Section 8.
+    priority: required
+    stability: stable
+    source: SP-003 Section 8
+    verification:
+      - method: ordering_test
+        evidence: Mixed entity, relationship, and property inputs produce the exact required identifier order.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-017
+    title: Relationships do not schedule execution
+    requirement: >-
+      Relationship direction, cycles, self-relationships, and disconnected
+      components MUST NOT reorder the canonical structural execution sequence.
+    priority: required
+    stability: stable
+    source: SP-003 Section 8
+    verification:
+      - method: ordering_test
+        evidence: Relationship shape variations preserve insertion-derived order and require no scheduler.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-018
+    title: Metadata neutrality
+    requirement: >-
+      Representation metadata MUST NOT affect ProcessDefinition contents,
+      execution order, execution state, or ExecutionResult.
+    priority: required
+    stability: stable
+    source: SP-003 Section 7
+    verification:
+      - method: semantic_neutrality_test
+        evidence: Documents differing only in metadata produce equivalent Process outcomes.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-019
+    title: Exact execution state set
+    requirement: >-
+      ExecutionState MUST define exactly Ready, Running, Completed, and Failed.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 5 and 9
+    verification:
+      - method: compile_time_test
+        evidence: Public declarations and exhaustive state tests contain exactly the four approved states.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-020
+    title: Successful context lifecycle
+    requirement: >-
+      Successful execution of a Ready ExecutionContext MUST follow
+      Ready to Running to Completed and return a Completed result.
+    priority: required
+    stability: stable
+    source: SP-003 Section 9
+    verification:
+      - method: state_transition_test
+        evidence: State observation evidence records the exact successful transition sequence.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-021
+    title: One-shot ExecutionContext
+    requirement: >-
+      Executing a context whose state is not Ready MUST throw std::logic_error
+      and leave that context unchanged.
+    priority: required
+    stability: stable
+    source: SP-003 Section 9
+    verification:
+      - method: state_transition_test
+        evidence: Re-execution and every non-Ready state are rejected with unchanged context snapshots.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-022
+    title: ExecutionContext isolation
+    requirement: >-
+      Each ExecutionContext MUST own one definition value, one state, and one
+      trace that are isolated from every other context.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 5 and 14
+    verification:
+      - method: isolation_test
+        evidence: Independent contexts for equal and different definitions cannot alter one another.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-023
+    title: Successful result invariants
+    requirement: >-
+      A successful ExecutionResult MUST be Completed with Success code, an
+      empty message, no diagnostics, and the complete canonical trace.
+    priority: required
+    stability: stable
+    source: SP-003 Section 10
+    verification:
+      - method: result_test
+        evidence: Empty and non-empty successful executions satisfy every success invariant.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-024
+    title: Invalid result invariants
+    requirement: >-
+      An invalid-input ExecutionResult MUST be Failed with
+      InvalidRepresentation code, a deterministic non-empty message, complete
+      validation diagnostics, and an empty trace.
+    priority: required
+    stability: stable
+    source: SP-003 Section 10
+    verification:
+      - method: result_test
+        evidence: Invalid inputs satisfy every failure invariant across repeated equivalent runs.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-025
+    title: Preserve validation diagnostic order
+    requirement: >-
+      Invalid-input ExecutionResult diagnostics MUST preserve the complete
+      deterministic order, codes, severities, and messages returned by
+      CCA-REP-1.0 validation.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 6 and 10
+    verification:
+      - method: diagnostic_order_test
+        evidence: Process diagnostics equal the direct Representation validation fingerprint for multi-error inputs.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-026
+    title: Synchronous execution
+    requirement: >-
+      Every ProcessEngine execute overload MUST complete synchronously and
+      return only after reaching a terminal Process execution state.
+    priority: required
+    stability: stable
+    source: SP-003 Section 11
+    verification:
+      - method: api_test
+        evidence: Each execute call returns a terminal result and exposes no asynchronous handle.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-027
+    title: Complete successful trace
+    requirement: >-
+      Successful execution MUST append each identifier in
+      ProcessDefinition executionOrder exactly once and in the same order.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 8 and 11
+    verification:
+      - method: trace_test
+        evidence: Context and result traces equal the definition order with no omission, duplication, or reordering.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-028
+    title: Stateless public ProcessEngine
+    requirement: >-
+      ProcessEngine MUST be the only public Process service and MUST be
+      concrete, default-constructible, and free of per-execution mutable state.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 5 and 11
+    verification:
+      - method: api_review
+        evidence: Public API review and construction tests confirm the exact service surface and stateless behavior.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-029
+    title: Execute overload equivalence
+    requirement: >-
+      Direct document, definition, and Ready-context execute overloads MUST
+      produce equivalent terminal results for the same valid definition.
+    priority: required
+    stability: stable
+    source: SP-003 Section 11
+    verification:
+      - method: equivalence_test
+        evidence: All three entry surfaces produce equal state, code, message, diagnostics, and trace.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-030
+    title: Strong exception guarantee
+    requirement: >-
+      ProcessDefinition construction and every execute overload MUST provide
+      the strong exception guarantee for source documents, caller-owned
+      definitions, and caller-owned contexts.
+    priority: required
+    stability: stable
+    source: SP-003 Section 15
+    verification:
+      - method: exception_safety_test
+        evidence: Injected allocation failures and invalid-state calls preserve complete before-state snapshots.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-031
+    title: ExactlyOne Runtime Service Contract
+    requirement: >-
+      Each hosting Runtime instance MUST expose ProcessEngine as a typed
+      Service Contract with ExactlyOne cardinality.
+    priority: required
+    stability: stable
+    source: SP-003 Section 12
+    verification:
+      - method: runtime_integration_test
+        evidence: Runtime composition validates exactly one ProcessEngine contract binding per instance.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-032
+    title: Internal ProcessEngine Provider
+    requirement: >-
+      The Runtime Provider that supplies ProcessEngine MUST remain internal to
+      Runtime composition and MUST NOT be part of API-002-HPP.
+    priority: required
+    stability: stable
+    source: SP-003 Section 12
+    verification:
+      - method: api_and_architecture_review
+        evidence: Public headers expose ProcessEngine but no Process Provider type, while Runtime registration uses an internal Provider.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-033
+    title: Runtime lifecycle separation
+    requirement: >-
+      Runtime-hosted Process execution MUST occur only while the owning Runtime
+      is Running and MUST NOT advance, replace, or invent Runtime lifecycle
+      transitions.
+    priority: required
+    stability: stable
+    source: SP-003 Section 12
+    verification:
+      - method: runtime_lifecycle_test
+        evidence: Provider start precedes hosted execution, execution occurs only while Running, Provider stop follows it, and Runtime lifecycle history is unchanged by the call.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-034
+    title: Runtime dependency injection and instance isolation
+    requirement: >-
+      Runtime-hosted ProcessEngine resolution and every required collaborator
+      MUST use typed Runtime contracts and Dependency Injector, and MUST remain
+      isolated to the owning Runtime instance.
+    priority: required
+    stability: stable
+    source: SP-003 Section 12
+    verification:
+      - method: runtime_isolation_test
+        evidence: Multiple Runtime instances resolve distinct engines and no provider or outcome crosses instance boundaries.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-035
+    title: Process and Runtime failure separation
+    requirement: >-
+      Invalid Process input MUST remain an ExecutionResult outcome, while
+      Process Provider start or stop failure MUST remain a CCA-RF-1.0 Runtime
+      lifecycle failure.
+    priority: required
+    stability: stable
+    source: SP-003 Section 12
+    verification:
+      - method: failure_path_test
+        evidence: Input rejection leaves Runtime Running, while injected Provider lifecycle failure follows the Runtime failure path.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-036
+    title: Documented Process thread safety
+    requirement: >-
+      The implementation MUST support concurrent const definition and result
+      access and concurrent stateless engine calls with distinct contexts, and
+      MUST require external synchronization for shared contexts and
+      CCA-REP-1.0 document access.
+    priority: required
+    stability: stable
+    source: SP-003 Section 16
+    verification:
+      - method: thread_safety_test
+        evidence: Concurrent supported cases are race-free and documented unsupported cases require external synchronization.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-037
+    title: Exact public C++ declarations
+    requirement: >-
+      The implementation MUST match every public declaration in API-002-HPP
+      without adding an undocumented public Process concept or changing a
+      signature.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 1 and 18
+    verification:
+      - method: api_conformance_test
+        evidence: Compile-time declaration checks and public-header review match API-002-HPP exactly.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
+
+  - id: CCA-PROC-038
+    title: Complete automated conformance coverage
+    requirement: >-
+      Every required CCA-PROC-1.0 requirement and every normative API-002
+      behavior MUST map to attributable automated verification evidence.
+    priority: required
+    stability: stable
+    source: SP-003 Sections 18 and 19
+    verification:
+      - method: traceability_audit
+        evidence: The implementation evidence matrix maps every requirement and normative API behavior to passing automated tests.
+    implementation_milestone: IM-005
+    status: proposed
+    adr: []
