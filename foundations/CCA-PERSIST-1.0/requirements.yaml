@@ -1,0 +1,113 @@
+metadata:
+  specification_id: CCA-PERSIST-1.0
+  title: CCA Persistence Foundation Standard
+  version: "1.0"
+  publication: draft
+  review_state: ready_for_independent_review
+  scope: Persistence Foundation
+  implementation_milestone: IM-006
+  normative_source: SP-004
+
+requirements:
+  - id: CCA-PERSIST-001
+    title: Constitutional alignment
+    requirement: The Persistence Foundation MUST conform to CCA-ARCH-1.0, CCA-LEX-1.0, CCA-GOV-1.0, and CCA-ENG-2.0 without redefining constitutional concepts.
+    priority: required
+    source: SP-004 Section 1
+    verification: architecture_review
+  - id: CCA-PERSIST-002
+    title: Durable state scope
+    requirement: Persistence MUST preserve Workspace, Domains, Assets, Policies, metadata, persisted ProcessDefinitions, and Execution Context snapshots.
+    priority: required
+    source: SP-004 Sections 1 and 4
+    verification: conformance_test
+  - id: CCA-PERSIST-003
+    title: Runtime exclusion
+    requirement: Persistence MUST NOT preserve Runtime implementation state, lifecycle state, registries, Providers, threads, or implementation sinks.
+    priority: required
+    source: SP-004 Sections 1 and 4
+    verification: conformance_test
+  - id: CCA-PERSIST-004
+    title: Public concepts
+    requirement: The public API MUST provide PersistencePackage, PersistenceMetadata, PersistenceResult, PersistenceEngine, PersistenceFormat, and ExecutionContextSnapshot.
+    priority: required
+    source: SP-004 Section 2
+    verification: api_contract_test
+  - id: CCA-PERSIST-005
+    title: Public service operations
+    requirement: PersistenceEngine MUST provide save, load, and validate operations with deterministic results.
+    priority: required
+    source: SP-004 Section 2
+    verification: api_contract_test
+  - id: CCA-PERSIST-006
+    title: Source immutability
+    requirement: Save MUST observe source Workspace state without modifying the source document or its lifecycle.
+    priority: required
+    source: SP-004 Section 7
+    verification: conformance_test
+  - id: CCA-PERSIST-007
+    title: Package ownership
+    requirement: A successful package MUST own copied Workspace state, metadata, format, and context snapshots by value.
+    priority: required
+    source: SP-004 Sections 4 and 7
+    verification: conformance_test
+  - id: CCA-PERSIST-008
+    title: Immutable package
+    requirement: A successfully created PersistencePackage MUST be immutable through its public API.
+    priority: required
+    source: SP-004 Sections 5 and 7
+    verification: api_contract_test
+  - id: CCA-PERSIST-009
+    title: Deterministic ordering
+    requirement: Equivalent semantic input MUST produce equivalent package content and restoration order, including semantic object and metadata ordering.
+    priority: required
+    source: SP-004 Section 5
+    verification: conformance_test
+  - id: CCA-PERSIST-010
+    title: Validation purity
+    requirement: Validation MUST be side-effect free and MUST report deterministic diagnostics without changing the package.
+    priority: required
+    source: SP-004 Section 5
+    verification: conformance_test
+  - id: CCA-PERSIST-011
+    title: Atomic outcomes
+    requirement: Save and load MUST either produce a complete valid result or report failure without partially exposing a package.
+    priority: required
+    source: SP-004 Section 5
+    verification: conformance_test
+  - id: CCA-PERSIST-012
+    title: Context snapshot fidelity
+    requirement: ExecutionContextSnapshot MUST preserve a reference to a corresponding persisted ProcessDefinition, its public execution state, and trace data, with copied ownership and no duplicated ProcessDefinition.
+    priority: required
+    source: SP-004 Sections 4 and 7
+    verification: conformance_test
+  - id: CCA-PERSIST-013
+    title: Runtime independence
+    requirement: Loading MUST NOT start Runtime or Services and MUST preserve the downward dependency direction.
+    priority: required
+    source: SP-004 Section 6
+    verification: architecture_review
+  - id: CCA-PERSIST-014
+    title: Provider boundary
+    requirement: Providers MAY supply external preservation infrastructure but MUST NOT define Persistence architecture or public Persistence concepts.
+    priority: required
+    source: SP-004 Sections 3 and 8
+    verification: architecture_review
+  - id: CCA-PERSIST-015
+    title: Excluded concerns
+    requirement: The Persistence Foundation MUST NOT introduce databases, cloud providers, serialization formats, compression, encryption, networking, distributed persistence, replication, synchronization, or storage engines.
+    priority: required
+    source: SP-004 Section 8
+    verification: architecture_review
+  - id: CCA-PERSIST-016
+    title: Package construction path
+    requirement: PersistencePackage MUST provide a public value-owning construction path for a Workspace, metadata, format, and context snapshots so a Provider can supply an already-owned package to load.
+    priority: required
+    source: API-003-HPP PersistencePackage
+    verification: api_contract_test
+  - id: CCA-PERSIST-017
+    title: Provider-independent boundary
+    requirement: Save MUST create an owned package from supplied state, and load MUST consume an already available package and return an independent restored package without selecting or requiring a Provider or external representation mechanism.
+    priority: required
+    source: SP-004 Sections 3 and 6
+    verification: conformance_test
