@@ -1,0 +1,15 @@
+flowchart LR
+    Runtime[Runtime truth] --> Observation[Accepted Observation]
+    Observation --> Core[Investigation Core]
+    Core --> MIP[CCA-MIP-1.0 package]
+    Core --> SDK[MemoryOS SDK]
+    SDK --> CLI[MemoryOS CLI]
+    SDK --> Consumer[Other consumers]
+    Core --> Regression[Cognitive Regression]
+    Regression --> Explorer[Investigation Explorer]
+
+    Studio[Presentation / renderer] -. projection only .-> SDK
+    Studio -. never computes investigation truth .-> Core
+
+    classDef authority fill:#102c3d,stroke:#2384b8,color:#ffffff
+    class Runtime,Core,MIP,SDK,CLI,Regression,Explorer authority

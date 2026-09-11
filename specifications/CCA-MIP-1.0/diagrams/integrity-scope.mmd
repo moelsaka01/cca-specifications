@@ -1,0 +1,36 @@
+flowchart LR
+    Header["Header<br/>$schema · kind · formatVersion"]
+
+    subgraph Sections["Section digests · SHA-256"]
+        M[manifest]
+        MD[metadata]
+        O[observations]
+        T[traces]
+        R[replays]
+        E[evolutions]
+        C[comparativeReconstructions]
+        X[extensions]
+        V[verification]
+    end
+
+    O --> Cognition["Cognition digest"]
+    T --> Cognition
+    R --> Cognition
+    E --> Cognition
+    C --> Cognition
+
+    Header --> Package["Package digest"]
+    M --> Package
+    MD --> Package
+    O --> Package
+    T --> Package
+    R --> Package
+    E --> Package
+    C --> Package
+    X --> Package
+    V --> Package
+
+    Package --> Integrity["integrity section<br/>excluded from its own commitment"]
+    Cognition --> Integrity
+    Sections --> Integrity
+

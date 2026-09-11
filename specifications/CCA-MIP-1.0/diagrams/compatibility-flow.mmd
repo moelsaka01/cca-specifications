@@ -1,0 +1,15 @@
+flowchart TD
+    Start["Read untrusted .mip bytes"] --> Lexical["Resource · UTF-8 · JSON · duplicate-member checks"]
+    Lexical --> Canonical["Require exact RFC 8785 bytes"]
+    Canonical --> Major{"Known format major?"}
+    Major -- No --> RejectVersion["Reject<br/>UNSUPPORTED_VERSION"]
+    Major -- Yes --> Core["Closed major-version schema and inventory"]
+    Core --> Hashes["Recompute section · cognition · package digests"]
+    Hashes --> Semantics["Workspace · identity · order · references · derivations"]
+    Semantics --> Critical{"Unknown critical extension?"}
+    Critical -- Yes --> RejectExtension["Reject<br/>UNSUPPORTED_CRITICAL_EXTENSION"]
+    Critical -- No --> Preserve["Preserve unknown noncritical extensions"]
+    Preserve --> Prohibitions["Prohibited-content and verification checks"]
+    Prohibitions --> Valid{"All ordered phases pass?"}
+    Valid -- No --> RejectAtomic["Reject atomically<br/>publish nothing"]
+    Valid -- Yes --> Accept["Accept complete package"]

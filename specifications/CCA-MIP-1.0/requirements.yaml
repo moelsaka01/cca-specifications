@@ -1,0 +1,907 @@
+metadata:
+  specification_id: CCA-MIP-1.0
+  title: Memory Investigation Package Standard
+  version: "1.0"
+  format_version: "1.0.0"
+  publication: draft
+  review_state: ready_for_independent_review
+  scope: Deterministic interchange of MemoryOS cognition
+  capability: MIP-001
+  normative_source: MIP-001
+
+requirements:
+  - id: CCA-MIP-001
+    title: Single-Workspace package boundary
+    requirement: >-
+      A Memory Investigation Package MUST contain cognition from exactly one Workspace, and the exact workspaceIdentifier in the manifest, every Observation, and every derived artifact MUST agree without transferring Workspace ownership.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §5.1 Authority and ownership"
+    verification:
+      - method: semantic_conformance_test
+        evidence: Accept a same-Workspace package and reject fixtures containing each cross-Workspace binding with WORKSPACE_MISMATCH.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-002
+    title: Observation payload ownership
+    requirement: >-
+      Observations MUST be the sole owners of semantic payload in a package, and Traces, Replays, Evolutions, and Comparative Reconstructions MUST contain only the references, revision digests, order, and classifications allowed by their contracts and MUST NOT duplicate Observation payload.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §5.1 Authority and ownership"
+    verification:
+      - method: semantic_conformance_test
+        evidence: Validate reference-only derived fixtures and reject every derived-artifact fixture that duplicates an Observation revision.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-003
+    title: Runtime and presentation independence
+    requirement: >-
+      Importing, validating, and deterministically reconstructing a package MUST NOT require a running MemoryOS Runtime, Studio, renderer, or Provider.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §5.2 Runtime and presentation independence"
+    verification:
+      - method: architecture_review
+        evidence: Demonstrate complete verification in a process with no Runtime, Studio, renderer, or Provider dependency available.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-004
+    title: Immutable package identity
+    requirement: >-
+      A .mip document MUST be immutable, and every change to semantic content, metadata, extensions, or verification evidence MUST produce new canonical bytes and a new package digest.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §5.3 Immutability"
+    verification:
+      - method: digest_vector_test
+        evidence: Mutate each committed section independently and verify that canonical bytes and package digest change.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-005
+    title: Single canonical JSON document
+    requirement: >-
+      A .mip file MUST be one UTF-8 JSON document with extension .mip, media type application/vnd.memoryos.mip+json, no byte-order mark, exactly one JSON value, no duplicate member names, and exact RFC 8785 canonical serialization; it MUST NOT be a ZIP, directory, multipart body, database, or sidecar container.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §6.1 Single canonical document"
+    verification:
+      - method: canonical_byte_test
+        evidence: Accept the canonical golden vector and reject BOM, duplicate-member, multi-value, non-JCS, archive, and sidecar fixtures.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-006
+    title: Closed JSON value domain
+    requirement: >-
+      Package values MUST use only RFC 8785-compatible JSON objects, arrays, strings, booleans, null, and finite numbers, and MUST reject NaN, infinities, negative zero, comments, trailing commas, duplicate names, invalid Unicode, and undeclared out-of-range integers.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §6.2 JSON value restrictions"
+    verification:
+      - method: lexical_negative_test
+        evidence: Reject one fixture for every excluded lexical form and accept declared decimal-string encoding at the interoperable integer boundary.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-007
+    title: Exact core package layout
+    requirement: >-
+      Every package MUST contain exactly the required top-level members, exact header values, and core-section cardinalities defined by MIP-001 §7.1; every array-valued core section MUST be present even when empty, and unknown top-level or closed-core members MUST be rejected.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §7.1 Required top-level members"
+    verification:
+      - method: schema_and_closed_member_test
+        evidence: Validate the complete member matrix and reject missing, misspelled, additional, wrong-cardinality, and wrong-header fixtures.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-008
+    title: Deterministic manifest contract
+    requirement: >-
+      The manifest MUST contain a nonempty stable packageIdentifier supplied explicitly as an exact export input, the exact Workspace identifier, the RFC8785, SHA-256, and MIP-CORE-1.0 profiles, sorted required and optional feature sets, and an inventory equal to the five artifact-array cardinalities; a Producer MUST NOT replace, regenerate, or implicitly synthesize packageIdentifier.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §7.2 Manifest"
+    verification:
+      - method: manifest_conformance_test
+        evidence: Verify exact profiles, feature ordering, stable identity, and inventory counts, including rejection of every count mismatch and nondeterministic claimed export vector.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-009
+    title: Technical metadata boundary
+    requirement: >-
+      Metadata MUST contain only Producer and source-product identity and version plus an optional caller-supplied exportedAt encoded as RFC 3339 UTC with a Z suffix; export MUST NOT read time implicitly, and omission of exportedAt MUST be the deterministic default.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §7.3 Metadata"
+    verification:
+      - method: metadata_conformance_test
+        evidence: Verify omission-by-default, exact caller-supplied UTC encoding, deterministic repeat export, and rejection of undeclared metadata members.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-010
+    title: No manufactured investigation artifacts
+    requirement: >-
+      A Producer MUST NOT manufacture a Trace, Replay, Evolution, or Comparative Reconstruction to populate an empty optional artifact section, and an Observation-only package MUST remain valid.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §7.1 Required top-level members"
+    verification:
+      - method: export_conformance_test
+        evidence: Export and validate an Observation-only golden vector with all optional artifact arrays present and empty.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-011
+    title: Typed reference identity tuple
+    requirement: >-
+      Every semantic record and relationship MUST use a typed reference whose portable identity is the exact tuple of stable qualified kind, exact source identifier, and zero-based occurrence.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §8.1 Typed reference"
+    verification:
+      - method: identity_conformance_test
+        evidence: Verify tuple-based identity for records and relationships and reject incomplete or type-confused references.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-012
+    title: Deterministic occurrence assignment
+    requirement: >-
+      For equal kind and identifier values within an Observation, a Producer MUST assign occurrence values contiguously in authoritative source order and MUST preserve those values in every package reference.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §8.1 Typed reference"
+    verification:
+      - method: identity_conformance_test
+        evidence: Verify contiguous collision disambiguation and reject gaps, duplicates, reordering, and inconsistent derived references.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-013
+    title: Exact source identifier preservation
+    requirement: >-
+      Import, export, comparison, and hash calculation MUST preserve source identifiers exactly without replacement, trimming, case folding, locale transformation, Unicode normalization, or substitution with Studio world keys, array paths, DOM identifiers, or renderer addresses.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §6.2 JSON value restrictions and §8.1 Typed reference"
+    verification:
+      - method: identity_round_trip_test
+        evidence: Round-trip case-sensitive and canonically distinct Unicode identifiers byte-for-byte and reject private presentation identifiers used as core identity.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-014
+    title: Unique closed references
+    requirement: >-
+      Record and relationship references MUST be unique within each Observation; Observation identifiers MUST be unique across observations and identifiers MUST be unique within each derived-artifact collection; every relationship endpoint MUST resolve within its Observation; and every derived-artifact reference MUST resolve unambiguously in its explicitly bound Observation side and Workspace.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §8.2 Uniqueness and closure"
+    verification:
+      - method: reference_closure_test
+        evidence: Reject duplicate Observation and derived-artifact identifiers, duplicate record and relationship identities, dangling endpoints, ambiguous references, wrong-side references, and cross-Workspace references.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-015
+    title: Closed Observation record model
+    requirement: >-
+      Every Observation MUST contain exact identifier, nonnegative sequence, Workspace identifier, records, and relationships; every record MUST contain one typed reference, one closed core role, one ordered provenance array, and one authoritative revision; every provenance entry MUST contain exact source and relationship references; and every relationship MUST contain a typed reference, stable relationshipType, typed from and to endpoints, and authoritative revision.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §9.1 Record shape"
+    verification:
+      - method: observation_schema_test
+        evidence: Validate all five record roles and complete relationship shape, and reject absent, additional, invalid-role, and wrong-type members.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-016
+    title: Coherent detached Observation acceptance
+    requirement: >-
+      A Producer MUST export only a coherent, successful, detached source Observation and MUST reject every failed or partially acquired source result.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §9.2 Observation acceptance"
+    verification:
+      - method: export_conformance_test
+        evidence: Accept a coherent detached snapshot and prove atomic rejection of failed and partial acquisition fixtures.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-017
+    title: Observation semantic-only payload
+    requirement: >-
+      Observation revisions MUST contain only source cognition required for reconstruction and MUST NOT contain observing queries, transient operation results, active routes, highlight deltas, layout, view, control, cache, or Runtime implementation data.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §9.1 Record shape and §9.2 Observation acceptance"
+    verification:
+      - method: prohibited_content_test
+        evidence: Accept source cognitive revisions and reject an Observation fixture for each excluded transient, presentation, cache, and Runtime category.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-018
+    title: Observation chronology
+    requirement: >-
+      Observation sequence values MUST preserve source chronology and, after canonical ordering, MUST be strictly increasing; sequence gaps MAY exist, but duplicate sequence-plus-identifier pairs MUST be rejected.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §9.2 Observation acceptance and §9.3 Canonical Observation order"
+    verification:
+      - method: ordering_conformance_test
+        evidence: Accept chronology with gaps and reject duplicate, descending, and chronology-inverting Observation fixtures.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-019
+    title: Canonical Observation member order
+    requirement: >-
+      Observations MUST be ordered by sequence then exact identifier, records and relationships MUST be ordered by typed reference tuple, and arrays inside revision MUST retain authoritative semantic order without locale-sensitive comparison or normalization.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §9.3 Canonical Observation order"
+    verification:
+      - method: ordering_conformance_test
+        evidence: Compare canonical vectors across insertion, locale, and container iteration variations while preserving revision-array order.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-020
+    title: Observation role and revision fidelity
+    requirement: >-
+      A Producer and Consumer MUST preserve every accepted record role, ordered provenance link, relationship type, authoritative semantic revision, relationship direction, and exact Workspace binding without inference, normalization, regeneration, or ownership transfer; evidence and context MUST have no provenance, semanticTransformation MUST have one or more evidence sources, retrieval exactly one semanticTransformation source, and reflection one or more retrieval sources, with an acyclic and unambiguous provenance graph.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §5.1 Authority and ownership and §9 Observation"
+    verification:
+      - method: semantic_round_trip_test
+        evidence: Round-trip every role and relationship form with semantically ordered revisions, verify exact canonical equality, and reject wrong-role, wrong-cardinality, ambiguous, reused-relationship, and cyclic provenance with INVALID_PROVENANCE.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-021
+    title: Trace Observation and Reflection binding
+    requirement: >-
+      Every Cognitive Trace MUST bind exactly one included Observation, MUST use the same exact Workspace identifier, and MUST name exactly one included reflection record as its target; every branch MUST terminate at that exact target.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §10 Cognitive Trace"
+    verification:
+      - method: trace_reconstruction_test
+        evidence: Accept a closed Reflection trace and reject absent Observation, wrong Workspace, non-Reflection target, missing target, and multiple-target fixtures.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-022
+    title: Trace branch and role grammar
+    requirement: >-
+      Every Trace MUST contain one or more zero-based contiguous branches, each with zero-based contiguous steps in the fixed grammar of one or more originEvidence steps, exactly one semanticTransformation step, exactly one retrieval step, and exactly one terminal reflectionCurrent step.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §10 Cognitive Trace"
+    verification:
+      - method: trace_reconstruction_test
+        evidence: Validate the complete role grammar and reject empty, noncontiguous, reordered, missing-role, duplicate-singleton-role, and nonterminal-Reflection fixtures.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-023
+    title: Trace relationship traversal integrity
+    requirement: >-
+      Trace roles MUST correspond exactly to Observation roles; every origin relationship MUST join its evidence node to the branch transformation, the transformation relationship MUST join that transformation to the branch Retrieval, and the Retrieval relationship MUST join that Retrieval to the target Reflection, with forward or reverse matching stored endpoints; reflectionCurrent MUST reference the target reflection, omit the relationship, and use null direction.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §10 Cognitive Trace"
+    verification:
+      - method: trace_relationship_test
+        evidence: Verify role correspondence, complete stage-to-stage continuity, and forward and reverse traversals; reject mistyped roles, wrong other endpoints, dangling, misdirected, terminal-related, and non-null-terminal-direction fixtures.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-024
+    title: Exact deterministic Trace reconstruction
+    requirement: >-
+      A Verifier MUST reconstruct each Trace branch by following one target-Reflection provenance entry to one Retrieval, that Retrieval's single semanticTransformation provenance entry, and that transformation's ordered evidence provenance; it MUST resolve each corresponding relationship and direction exactly, preserve Reflection and evidence source order, reject invalid provenance, and require exact canonical Trace equality without resorting stored branches.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §10 Cognitive Trace"
+    verification:
+      - method: trace_reconstruction_test
+        evidence: Compare stored and independently rebuilt traces for multi-branch and multi-evidence vectors and reject reordered or semantically inconsistent traces.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-025
+    title: Replay reference-only binding
+    requirement: >-
+      Every Cognitive Replay MUST bind exactly one included validated Trace and its exact included Observation and Workspace, and each Replay step MUST reference only one Trace record or one Trace relationship without semantic payload.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §11 Cognitive Replay"
+    verification:
+      - method: replay_reconstruction_test
+        evidence: Accept a closed reference-only Replay and reject wrong-Trace, wrong-Observation, wrong-Workspace, non-Trace-element, and semantic-payload fixtures.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-026
+    title: Deterministic Replay projection
+    requirement: >-
+      Replay steps MUST be the exact deterministic projection of the bound Trace by fixed Trace-role order and stored branch order, emitting each first-seen node once with null relationship and direction followed by each first-seen relationship once with null node and the Trace direction.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §11 Cognitive Replay"
+    verification:
+      - method: replay_reconstruction_test
+        evidence: Rebuild multi-branch Replay vectors independently and reject reordered, repeated, omitted, and role-order-violating steps.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-027
+    title: Replay contiguity and terminal target
+    requirement: >-
+      Replay step indices MUST be zero-based and contiguous, and the final emitted element MUST be the bound Trace target.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §11 Cognitive Replay"
+    verification:
+      - method: replay_reconstruction_test
+        evidence: Reject Replay fixtures with index gaps, duplicate indices, wrong terminal elements, or trailing elements after the target.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-028
+    title: Replay controller-state exclusion
+    requirement: >-
+      A Replay MUST NOT store status, cursor, completed-current-future projection, timers, scheduler intervals, Play or Pause state, camera movement, or any other renderer or controller state.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §11 Cognitive Replay"
+    verification:
+      - method: prohibited_content_test
+        evidence: Reject one Replay fixture for every prohibited controller and presentation state category.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-029
+    title: Ordered Evolution binding
+    requirement: >-
+      Every Cognitive Evolution MUST bind exactly two included Observations in the same Workspace, and its from Observation sequence MUST precede its to Observation sequence without requiring adjacency.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §12 Cognitive Evolution"
+    verification:
+      - method: evolution_reconstruction_test
+        evidence: Accept nonadjacent forward comparison and reject missing, same, reversed, and cross-Workspace Observation pairs.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-030
+    title: Closed Evolution difference kinds
+    requirement: >-
+      Evolution differences MUST use only the eleven kinds and fixed kind order defined in MIP-001 §12 and MUST represent a changed record revision as one removal and one addition consistent with the record role, each positioned independently by that fixed global kind order.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §12 Cognitive Evolution"
+    verification:
+      - method: evolution_reconstruction_test
+        evidence: Exercise all eleven kinds, changed records, and unknown-kind rejection while verifying fixed kind ordering.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-031
+    title: Evolution revision-digest semantics
+    requirement: >-
+      Every Evolution and Comparative revision digest MUST use the exact MIP-1 domain-separated SHA-256 record or relationship formula in MIP-001 §14.2; an added Evolution subject MUST have null beforeRevisionDigest and the exact to-revision digest after it, a removed subject MUST have the inverse, and a modified relationship MUST preserve typed identity while supplying two different exact revision digests.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §12 Cognitive Evolution and §14.2 Digest encoding"
+    verification:
+      - method: evolution_digest_test
+        evidence: Verify addition, removal, and relationship modification digest vectors and reject missing, swapped, equal, or identity-changing digest records.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-032
+    title: Exact deterministic Evolution reconstruction
+    requirement: >-
+      A Verifier MUST recompute Evolution from the two authoritative Observations, sort differences by fixed kind order then typed subject reference, assign contiguous indices after sorting, and require exact canonical equality.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §12 Cognitive Evolution"
+    verification:
+      - method: evolution_reconstruction_test
+        evidence: Independently rebuild identical, added, removed, and modified cognition vectors and reject every stored mismatch or ordering deviation.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-033
+    title: Evolution semantic-only difference boundary
+    requirement: >-
+      An Evolution MUST contain only ordered semantic difference records and exact revision digests and MUST NOT contain summaries, unchanged-record lists, union worlds, layout, renderer classifications, or pixel differences.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §12 Cognitive Evolution"
+    verification:
+      - method: prohibited_content_test
+        evidence: Accept a reference-and-digest-only Evolution and reject each excluded comparison or rendering artifact.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-034
+    title: Comparative Reconstruction dependency closure
+    requirement: >-
+      Every Comparative Reconstruction MUST reference exactly two included validated Traces, their exact two included Observations, and the included Evolution for that ordered Observation pair.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §13 Comparative Reconstruction"
+    verification:
+      - method: comparative_reconstruction_test
+        evidence: Reject missing, substituted, reversed, invalid, and cross-pair Trace, Observation, or Evolution dependencies.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-035
+    title: Deterministic comparative alignment
+    requirement: >-
+      Comparative Reconstruction MUST align the two rebuilt Replay sequences by exact element type and typed reference using longest common subsequence, MUST emit the Observation-A-only element first for equal-length choices, and MUST enforce the complete shared, aOnly, bOnly, and modified side/cardinality invariants, node-versus-relationship revision codes, and fixed reason-code order in MIP-001 §13.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §13 Comparative Reconstruction"
+    verification:
+      - method: comparative_reconstruction_test
+        evidence: Verify shared, aOnly, bOnly, modified, and tie-break vectors and reject unsupported states, reasons, or alternative alignments.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-036
+    title: Exact comparative reconstruction
+    requirement: >-
+      A Verifier MUST rebuild both Replays, aligned moments, states, reasons, and strictly ordered divergenceIndices and require exact equality, while Comparative Reconstruction MUST NOT store controller status, cursor, pause reason, union world, layout, side-by-side projection, or summary text.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §13 Comparative Reconstruction"
+    verification:
+      - method: comparative_reconstruction_test
+        evidence: Independently reconstruct identical and divergent vectors and reject mismatched moments, indices, controller state, and rendering projections.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-037
+    title: Canonical-byte acceptance
+    requirement: >-
+      A Consumer MUST require incoming bytes to equal the RFC 8785 serialization of their parsed value byte-for-byte and MUST reject, rather than normalize and accept, every noncanonical encoding.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §6.1 Single canonical document"
+    verification:
+      - method: canonical_byte_test
+        evidence: Compare exact golden bytes and reject semantically equivalent inputs with whitespace, alternate escaping, or noncanonical object-member order.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-038
+    title: Scalar canonical fidelity
+    requirement: >-
+      Strings MUST remain exact throughout import, export, comparison, and hashing, and every integer outside the interoperable numeric range MUST use a decimal string only where its field contract explicitly declares that representation.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §6.2 JSON value restrictions"
+    verification:
+      - method: scalar_canonicalization_test
+        evidence: Verify exact Unicode string preservation and numeric boundary vectors, including rejection of undeclared out-of-range JSON numbers and decimal strings.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-039
+    title: Complete semantic array ordering
+    requirement: >-
+      Every core collection MUST follow its exact semantic order in MIP-001 §16, and equivalent semantic input with identical explicitly supplied manifest and metadata inputs MUST produce byte-identical output without dependence on locale, clocks, randomness, unordered iteration, filesystem order, renderer state, viewport, or pixels.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §16 Canonical ordering"
+    verification:
+      - method: determinism_matrix_test
+        evidence: Compare exports across locale, insertion order, process, clock, and renderer-state variations and verify all collection-specific order rules.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-040
+    title: Fixed verification evidence
+    requirement: >-
+      Verification MUST declare profile MIP-CORE-1.0, status passed, and exactly the six checks in fixed order with passed status; every Consumer MUST recompute the first five checks and every mechanically decidable prohibited-content rule and reject any mismatch, while source-authorship portions of PROHIBITED_CONTENT MUST be established as Producer conformance evidence rather than inferred from bytes.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §14.1 Verification section"
+    verification:
+      - method: verification_evidence_test
+        evidence: Accept the exact check vector and reject missing, reordered, additional, failed, or falsely declared checks.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-041
+    title: Section digest computation
+    requirement: >-
+      Every section digest MUST use the exact MIP-1 domain-separated SHA-256 input, canonical section value, lowercase sha256 encoding, and fixed sectionDigests name order defined by MIP-001 §14.2.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §14.2 Digest encoding"
+    verification:
+      - method: digest_vector_test
+        evidence: Recompute every golden section digest and reject wrong domain, name, bytes, algorithm, encoding case, length, membership, and order.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-042
+    title: Cognition digest computation
+    requirement: >-
+      integrity.cognitionDigest MUST be SHA-256 of the exact domain-separated JCS commitment to the five semantic artifact section-digest records in their fixed order and MUST exclude package metadata and nonsemantic sections.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §14.3 Cognition digest"
+    verification:
+      - method: digest_vector_test
+        evidence: Match the golden cognition digest and prove that semantic-section changes alter it while metadata-only changes do not.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-043
+    title: Package digest computation
+    requirement: >-
+      integrity.packageDigest MUST be SHA-256 of the exact domain-separated JCS package commitment containing the three header values and complete ordered sectionDigests, with integrity excluded solely to prevent self-reference.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §14.4 Package digest"
+    verification:
+      - method: digest_vector_test
+        evidence: Match the golden package digest and verify that every header and committed-section mutation changes it while integrity remains outside its own input.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-044
+    title: Checksum assurance boundary
+    requirement: >-
+      A conformance claim MUST treat embedded checksums as integrity commitments only and MUST NOT treat them as proof of producer identity or authenticity without an externally trusted digest or a separately specified critical signature extension.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §14.4 Package digest and §21 Security, privacy, and operational considerations"
+    verification:
+      - method: security_conformance_review
+        evidence: Verify that conformance claims and documentation distinguish recomputable integrity from externally established authenticity.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-045
+    title: Ordered atomic validation pipeline
+    requirement: >-
+      A Verifier MUST execute the thirteen validation phases in the exact order defined by MIP-001 §17.1, MUST keep all intermediate results private, and MUST NOT publish a partial validation result or package state.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §17.1 Validation phases"
+    verification:
+      - method: validation_precedence_test
+        evidence: Instrument every phase, verify exact precedence for multi-defect fixtures, and prove that no partial result becomes observable.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-046
+    title: Stable deterministic diagnostics
+    requirement: >-
+      Every validation diagnostic MUST contain one stable code from the closed MIP-001 §17.2 set and an RFC 6901 JSON Pointer path, MUST contain no implementation-specific stack trace, and multiple diagnostics MUST be ordered by validation phase, then path, then code.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §17.2 Diagnostics"
+    verification:
+      - method: diagnostic_contract_test
+        evidence: Exercise every stable failure code and verify exact pointer syntax, absence of stack data, and deterministic multi-diagnostic ordering.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-047
+    title: Conditional artifact validity
+    requirement: >-
+      A derived artifact MUST include and bind every dependency required by MIP-001 §17.3 and MUST equal independent deterministic reconstruction; cryptographic integrity or JSON Schema success alone MUST NOT satisfy semantic validity.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §17.3 Conditional validity"
+    verification:
+      - method: semantic_conformance_test
+        evidence: Reject checksum-valid and schema-valid fixtures with missing dependencies or derivation mismatches for Trace, Replay, Evolution, and Comparative Reconstruction.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-048
+    title: Untrusted staged import
+    requirement: >-
+      An importer MUST treat incoming bytes as untrusted, stage parsing and every validation privately, preserve exact identifiers, authoritative order, semantic revisions, and unknown noncritical extensions, MUST NOT repair or normalize invalid content, and MUST commit only after every mandatory check passes.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §18 Import requirements"
+    verification:
+      - method: import_atomicity_test
+        evidence: Import valid round-trip vectors and inject failures at every validation phase while proving exact preservation and no repair, normalization, or premature commit.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-049
+    title: Resource-limit import failure
+    requirement: >-
+      A Consumer MAY reject bytes before allocation under its declared resource policy, but it MUST report RESOURCE_LIMIT_EXCEEDED and MUST publish no partial package or mutation.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §18 Import requirements"
+    verification:
+      - method: resource_limit_test
+        evidence: Exceed declared byte, depth, count, and allocation limits and verify the stable code, precommit rejection, and unchanged preexisting state.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-050
+    title: Truth-preserving export preparation
+    requirement: >-
+      An exporter MUST obtain one coherent detached successful Observation set, preserve exact source identifiers and authoritative semantic order, emit no inferred, repaired, or fabricated cognition, prove typed-reference closure, independently recompute every supplied derived artifact, and validate extension and prohibited-content rules before publication.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §19 Export requirements"
+    verification:
+      - method: export_conformance_test
+        evidence: Verify successful closed export and reject partial snapshots, regenerated identifiers, reordered semantics, fabrication, dangling references, invalid derivations, invalid extensions, and prohibited content.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-051
+    title: Canonical atomic export publication
+    requirement: >-
+      An exporter MUST calculate all section, cognition, and package digests, serialize exact RFC 8785 bytes, and publish the complete .mip atomically only after complete verification; any export failure MUST leave an existing destination unchanged and MUST emit no partial package.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §19 Export requirements"
+    verification:
+      - method: export_atomicity_test
+        evidence: Inject failure before and during each export stage and verify exact golden bytes on success, destination preservation on failure, and absence of partial output.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-052
+    title: Failure-state preservation
+    requirement: >-
+      Every import or export semantic, integrity, resource, allocation, or publication failure MUST leave preexisting package, destination, and caller-owned state unchanged and MUST NOT expose a partially accepted, verified, or serialized artifact.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §17.1 Validation phases, §18 Import requirements, and §19 Export requirements"
+    verification:
+      - method: failure_injection_test
+        evidence: Snapshot all observable preexisting state and inject each failure class at every commit boundary to verify the strong atomic failure guarantee.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-053
+    title: Namespaced extension shape
+    requirement: >-
+      Every extension MUST be an entry inside the extensions object keyed by a globally unique reverse-DNS name, MUST contain a version, Boolean critical flag, and canonical JSON payload, and MUST map bijectively to exactly one disjoint manifest feature array: critical extensions to features.required and noncritical extensions to features.optional; no feature name may lack an extension entry and no extension MAY appear as a new top-level or core member.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §7.4 Extensions"
+    verification:
+      - method: extension_schema_test
+        evidence: Accept valid reverse-DNS extension vectors and reject invalid keys, incomplete shapes, wrong critical types, and extensions outside the extension object.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-054
+    title: Extension semantic boundary
+    requirement: >-
+      An extension MUST NOT override, reinterpret, or replace core members; change core identity, ordering, validation, or derivation; duplicate Observation semantic payload; introduce executable behavior or opaque binary content; or evade prohibited-content rules.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §7.4 Extensions"
+    verification:
+      - method: extension_boundary_test
+        evidence: Reject one extension vector for every prohibited override, semantic mutation, duplication, executable, binary, and evasion case.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-055
+    title: Unknown noncritical extension preservation
+    requirement: >-
+      A Consumer MUST ignore an unknown noncritical extension semantically while preserving its exact JSON value and package commitment on round-trip, and an exporter that cannot preserve it MUST fail rather than remove or rewrite it.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §7.4 Extensions and §20.4 Unknown sections"
+    verification:
+      - method: extension_round_trip_test
+        evidence: Round-trip the unknown noncritical golden vector unchanged and verify atomic failure when exact preservation is unavailable.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-056
+    title: Unknown critical extension rejection
+    requirement: >-
+      A Consumer that does not understand a critical extension MUST reject the complete package atomically with UNSUPPORTED_CRITICAL_EXTENSION.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §7.4 Extensions and §20.3 Forward compatibility"
+    verification:
+      - method: extension_compatibility_test
+        evidence: Import an unknown critical extension vector and verify stable-code rejection with no partial state.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-057
+    title: Independent semantic wire versioning
+    requirement: >-
+      The formatVersion MUST be a stable numeric MAJOR.MINOR.PATCH value without prerelease or build metadata and MUST be versioned independently from specification, MemoryOS, Producer, SDK, and application versions; breaking meaning, core, validation profile, canonicalization, or digest changes require MAJOR, compatible optional namespaced extension definitions require MINOR, and clarifications that change no valid value, meaning, or canonical byte require PATCH.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §20.1 Independent versions"
+    verification:
+      - method: compatibility_policy_review
+        evidence: Classify a normative matrix of core-field, enum, ordering, digest, extension, profile, and erratum changes against the required version component.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-058
+    title: Deterministic version compatibility
+    requirement: >-
+      A newer same-major Consumer MUST accept every valid older minor and patch package, an unknown major MUST be rejected, unknown top-level or closed-core members MUST be rejected, unknown sections MUST be accepted only as correctly declared extensions, and a Producer MUST NOT silently downgrade or discard unrepresentable data or extensions.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §20.2 Backward compatibility through §20.4 Unknown sections"
+    verification:
+      - method: compatibility_matrix_test
+        evidence: Exercise older same-major, unknown-major, unknown-core, optional-extension, critical-extension, explicit representable downgrade, and lossy-downgrade vectors.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-059
+    title: Media and front-end asset exclusion
+    requirement: >-
+      A package MUST NOT contain screenshots, thumbnails, images, video, audio, media payloads, HTML, CSS, DOM state, canvas or WebGL buffers, fonts, icons, or themes.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §15 Prohibited content"
+    verification:
+      - method: prohibited_content_test
+        evidence: Reject representative inline, encoded, referenced, metadata, revision, verification, and extension fixtures for every excluded media and front-end category.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-060
+    title: Presentation and controller-state exclusion
+    requirement: >-
+      A package MUST NOT contain graph coordinates, layout anchors, camera, zoom, pan, color, animation, panel, filter, selection, Follow, navigation, inspector, route, Replay or Comparative cursor, Play or Pause, timer, scheduler, autoplay, or equivalent presentation and controller state.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §15 Prohibited content"
+    verification:
+      - method: prohibited_content_test
+        evidence: Reject one package fixture for every enumerated presentation and controller state in every extensible content location.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-061
+    title: Generated and inferred content exclusion
+    requirement: >-
+      A package MUST NOT contain renderer projections, union worlds, highlight lists, display summaries, pixel comparisons, AI- or LLM-generated summaries, explanations, rationales, recommendations, inferred causality, synthetic events, or fabricated cognition.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §15 Prohibited content"
+    verification:
+      - method: prohibited_content_test
+        evidence: Reject deterministic fixtures containing each rendering, generated-language, inference, synthetic-event, and fabrication category.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-062
+    title: Operational state and secret exclusion
+    requirement: >-
+      A package MUST NOT contain temporary caches, indexes, logs, telemetry, browser storage, history, unrelated diagnostics, Runtime implementation state, pointers, handles, threads, event buses, service registries, dependency injectors, live object references, Provider implementation details, credentials, secrets, endpoints, local paths, transport configuration, or storage configuration.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §15 Prohibited content and §21 Security, privacy, and operational considerations"
+    verification:
+      - method: prohibited_content_test
+        evidence: Reject one package fixture for each operational, Runtime, live-reference, Provider, secret, endpoint, path, transport, and storage category.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-063
+    title: Executable and opaque payload exclusion
+    requirement: >-
+      A package MUST NOT contain executable scripts, plugins, macros, binaries, native code, or opaque blobs, whether embedded in a core revision, metadata, verification evidence, or extension payload.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §15 Prohibited content"
+    verification:
+      - method: prohibited_content_test
+        evidence: Reject executable text, encoded executable, plugin, macro, binary, native-code, and opaque-blob vectors in every permitted JSON container.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []
+
+  - id: CCA-MIP-064
+    title: Source-authored cognition fidelity
+    requirement: >-
+      A package MAY preserve textual cognitive content only when it was actually present in the accepted source Observation and is not a credential, secret, executable, media payload, Provider configuration, or presentation or Runtime state; an exporter MUST NOT add, rewrite, summarize, infer, embellish, or duplicate that content outside its owning Observation revision.
+    priority: mandatory
+    stability: draft
+    source: "MIP-001 §15 Prohibited content"
+    verification:
+      - method: semantic_provenance_test
+        evidence: Accept exact source-authored cognitive text and reject exporter-added, rewritten, summarized, inferred, embellished, and derived-artifact-duplicated variants.
+    implementation_milestone: unassigned
+    status: proposed
+    adr: []

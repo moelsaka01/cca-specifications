@@ -1,0 +1,1331 @@
+metadata:
+  specification_id: CCA-MEMORYOS-1.0
+  title: MemoryOS Standard
+  version: "1.0"
+  publication: published
+  publication_date: "2026-09-05"
+  milestone: MO-1208
+  scope: Deterministic MemoryOS platform behavior and conformance
+  normative_requirement_count: 114
+
+incorporated_requirements:
+  - specification_id: CCA-RF-1.0
+    first_id: CCA-RF-001
+    last_id: CCA-RF-040
+    count: 40
+    requirements_registry_sha256: c1505f5b2b0cf69865a605d60a94279bcf73fa57310bedfcd29102f7f9830aa8
+    incorporation: normative
+    evidence_groups: [MOS-EVID-RT-001]
+  - specification_id: CCA-MIP-1.0
+    first_id: CCA-MIP-001
+    last_id: CCA-MIP-064
+    count: 64
+    requirements_registry_sha256: 4238525e7936376d7ea057c31266dd39c6379da471b4a6e7b09c6bee78e738af
+    incorporation: normative
+    evidence_groups: [MOS-EVID-MIP-001]
+
+evidence_groups:
+  MOS-EVID-RT-001: Runtime observation boundary and CCA-RF incorporation
+  MOS-EVID-LIFE-001: Investigation lifecycle, exact transition payloads, identities, and log integrity
+  MOS-EVID-MIP-001: MIP integration and CCA-MIP incorporation
+  MOS-EVID-ADAPT-001: Adapter descriptor, request, snapshot, projection, package, artifact, and failure contract
+  MOS-EVID-CORE-001: Core operations, identity, phase, availability, isolation, and failure behavior
+  MOS-EVID-ART-001: Native profile, Frame, artifact reconstruction, identity, ordering, validation, and control state
+  MOS-EVID-SDK-001: SDK complete Investigation projection, ownership, operation, and binding parity
+  MOS-EVID-CLI-001: CLI grammar, aliases, result shapes, streams, exits, and automation behavior
+  MOS-EVID-REG-001: Cognitive Regression behavior
+  MOS-EVID-EXPL-001: Investigation Explorer navigation and detached structural validation behavior
+  MOS-EVID-CONF-001: Conformance report integrity
+  MOS-EVID-COMP-001: Compatibility behavior
+  MOS-EVID-VER-001: Version identity and change control
+
+conformance_profiles:
+  applicability: union_of_common_and_selected_profile_evidence_groups
+  common_evidence_groups: [MOS-EVID-COMP-001, MOS-EVID-CONF-001, MOS-EVID-VER-001]
+  profiles:
+    - name: AI Runtime Adapter
+      evidence_groups: [MOS-EVID-ADAPT-001]
+    - name: CLI
+      evidence_groups: [MOS-EVID-CLI-001]
+    - name: Cognitive Investigation Explorer
+      evidence_groups: [MOS-EVID-EXPL-001]
+    - name: Cognitive Regression
+      evidence_groups: [MOS-EVID-REG-001]
+    - name: Investigation Core
+      evidence_groups: [MOS-EVID-CORE-001, MOS-EVID-LIFE-001]
+    - name: MIP Integration
+      evidence_groups: [MOS-EVID-MIP-001]
+    - name: Native Investigation Artifacts
+      evidence_groups: [MOS-EVID-ART-001]
+    - name: Runtime Observation Boundary
+      evidence_groups: [MOS-EVID-RT-001]
+    - name: SDK
+      evidence_groups: [MOS-EVID-SDK-001]
+
+requirements:
+  - id: CCA-MOS-RT-001
+    title: Runtime Foundation incorporation
+    requirement: A conforming MemoryOS platform MUST satisfy applicable CCA-RF-001 through CCA-RF-040 from the incorporated CCA-RF-1.0 publication.
+    priority: mandatory
+    stability: frozen
+    source: "runtime-behavior.md § CCA-MOS-RT-001"
+    verification: [{method: conformance_suite, evidence: MOS-EVID-RT-001}]
+    evidence_groups: [MOS-EVID-RT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-RT-002
+    title: Runtime source authority
+    requirement: MemoryOS MUST treat the source Runtime as the authority for observed cognition and MUST NOT replace, reinterpret, or own that source truth.
+    priority: mandatory
+    stability: frozen
+    source: "runtime-behavior.md § CCA-MOS-RT-002"
+    verification: [{method: architecture_review, evidence: MOS-EVID-RT-001}]
+    evidence_groups: [MOS-EVID-RT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-RT-003
+    title: Settled Observation acceptance
+    requirement: MemoryOS MUST publish as accepted cognition only a coherent, detached, immutable native Observation Frame whose outer resultCode is OK, or a verified MIP Observation, and MUST NOT publish an outer non-OK, incomplete, partial, or invalidly projected source result; nested cca-studio-native-observation result and session state fields are preserved source data and are not acceptance gates.
+    priority: mandatory
+    stability: frozen
+    source: "runtime-behavior.md § CCA-MOS-RT-003"
+    verification: [{method: negative_test, evidence: MOS-EVID-RT-001}]
+    evidence_groups: [MOS-EVID-RT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-RT-004
+    title: Deterministic Runtime boundary
+    requirement: Equivalent accepted cognition, explicit input, Workspace identity, and initial state MUST produce equivalent boundary outcomes.
+    priority: mandatory
+    stability: frozen
+    source: "runtime-behavior.md § CCA-MOS-RT-004"
+    verification: [{method: deterministic_repeat_test, evidence: MOS-EVID-RT-001}]
+    evidence_groups: [MOS-EVID-RT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-RT-005
+    title: Workspace isolation
+    requirement: Every Observation MUST retain exact Workspace identity and cross-Workspace values MUST be rejected without changing either Workspace or accepted investigation state.
+    priority: mandatory
+    stability: frozen
+    source: "runtime-behavior.md § CCA-MOS-RT-005"
+    verification: [{method: isolation_test, evidence: MOS-EVID-RT-001}]
+    evidence_groups: [MOS-EVID-RT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-RT-006
+    title: Runtime and presentation independence
+    requirement: Investigation after Observation acceptance MUST NOT require a live source Runtime or presentation and neither may alter accepted cognition.
+    priority: mandatory
+    stability: frozen
+    source: "runtime-behavior.md § CCA-MOS-RT-006"
+    verification: [{method: dependency_boundary_test, evidence: MOS-EVID-RT-001}]
+    evidence_groups: [MOS-EVID-RT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-LIFE-001
+    title: Closed lifecycle state set
+    requirement: An Investigation MUST expose exactly Created, Observed, Traced, ReplayReady, Replaying, ReplayComplete, ComparisonReady, Comparing, Verified, and Archived as lifecycle states.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-001"
+    verification: [{method: lifecycle_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-002
+    title: Closed lifecycle transitions
+    requirement: Lifecycle changes MUST follow the published transition table and undefined or precondition-failing transitions MUST be rejected deterministically.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-002"
+    verification: [{method: transition_matrix_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-003
+    title: Authoritative transition log
+    requirement: Core-generated investigation history MUST use the exact closed transition and log shapes, transition-kind set, payload forms, append-only contiguous indices, prefix-digest chain, domain-separated identities, and final log digest published by the lifecycle contract.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-003"
+    verification: [{method: integrity_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-004
+    title: Atomic state derivation
+    requirement: Every state-changing command MUST re-derive complete candidate state from transition zero and publish only after success, leaving prior state unchanged on failure.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-004"
+    verification: [{method: atomic_failure_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-005
+    title: Atomic Trace and Replay preparation
+    requirement: Trace selection MUST resolve one exact Reflection or authored Trace and atomically prepare its Replay; a later native Observation MUST rebuild that target against the new Frame or publish Observed with the defined diagnostic and no stale artifact.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-005"
+    verification: [{method: trace_replay_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-006
+    title: Replay action set and no-op
+    requirement: Replay MUST support only play, pause, restart, previous, next, and advance, and an action with no state change MUST NOT append a transition.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-006"
+    verification: [{method: replay_state_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-007
+    title: Comparison flow and restoration
+    requirement: Comparison MUST require completed Replay and two Observations, enter Evolution before Comparative Reconstruction, and restore the bound Replay state when leaving Evolution.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-007"
+    verification: [{method: comparison_lifecycle_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-008
+    title: Point-in-time verification
+    requirement: Verification MUST validate complete current state; later mutation MUST invalidate it and immediate archival MUST preserve it.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-008"
+    verification: [{method: verification_lifecycle_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-009
+    title: Terminal archive
+    requirement: Archived MUST be terminal for mutation while remaining loadable and checkpointable.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-009"
+    verification: [{method: archive_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-010
+    title: Return-to-world behavior
+    requirement: Return-to-world MUST clear active investigation artifacts without changing accepted Observations and MUST expose Observed or Created as applicable.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-010"
+    verification: [{method: lifecycle_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-011
+    title: Integrity-bound checkpoint restoration
+    requirement: A checkpoint MUST bind its Investigation, Workspace, log, log digest, transition count, and state digest, and invalid or conflicting restoration MUST fail atomically.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-011"
+    verification: [{method: checkpoint_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-LIFE-012
+    title: Source-authored MIP capability availability
+    requirement: A MIP-backed Investigation MUST expose derived capabilities only when corresponding validated source-authored artifacts exist, preserving Observation-only packages.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-lifecycle.md § CCA-MOS-LIFE-012"
+    verification: [{method: package_capability_test, evidence: MOS-EVID-LIFE-001}]
+    evidence_groups: [MOS-EVID-LIFE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-MIP-001
+    title: Complete MIP requirement incorporation
+    requirement: Every MIP operation MUST satisfy applicable CCA-MIP-001 through CCA-MIP-064 from the exact incorporated publication.
+    priority: mandatory
+    stability: frozen
+    source: "mip-contract.md § CCA-MOS-MIP-001"
+    verification: [{method: mip_conformance_suite, evidence: MOS-EVID-MIP-001}]
+    evidence_groups: [MOS-EVID-MIP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-MIP-002
+    title: Baseline export identity
+    requirement: Baseline export MUST use CCA-MIP format 1.0.0 and its exact profiles while import and round-trip preserve incorporated same-major compatibility.
+    priority: mandatory
+    stability: frozen
+    source: "mip-contract.md § CCA-MOS-MIP-002"
+    verification: [{method: format_and_compatibility_test, evidence: MOS-EVID-MIP-001}]
+    evidence_groups: [MOS-EVID-MIP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-MIP-003
+    title: Strict atomic MIP import
+    requirement: Import and verification MUST treat bytes as untrusted, perform the complete MIP contract, publish only a valid immutable package, and leave state unchanged on failure.
+    priority: mandatory
+    stability: frozen
+    source: "mip-contract.md § CCA-MOS-MIP-003"
+    verification: [{method: import_negative_suite, evidence: MOS-EVID-MIP-001}]
+    evidence_groups: [MOS-EVID-MIP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-MIP-004
+    title: Exact authored MIP export
+    requirement: Export MUST return canonical bytes for an existing verified MIP-backed Investigation and MUST NOT manufacture native-to-MIP cognition or missing package data.
+    priority: mandatory
+    stability: frozen
+    source: "mip-contract.md § CCA-MOS-MIP-004"
+    verification: [{method: export_boundary_test, evidence: MOS-EVID-MIP-001}]
+    evidence_groups: [MOS-EVID-MIP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-MIP-005
+    title: Single portable package semantics
+    requirement: An implementation MUST NOT introduce competing portable package semantics or implementation-specific repair, ordering, hashing, or presentation behavior.
+    priority: mandatory
+    stability: frozen
+    source: "mip-contract.md § CCA-MOS-MIP-005"
+    verification: [{method: architecture_review, evidence: MOS-EVID-MIP-001}]
+    evidence_groups: [MOS-EVID-MIP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-ADAPT-001
+    title: Provider-independent adapter contract
+    requirement: An adapter MUST implement contract version 1.0.0 with the exact provider-independent descriptor, definition, producer identity, attestation, and three-operation semantics without making a provider SDK part of the Standard.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-001"
+    verification: [{method: dependency_review, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ADAPT-002
+    title: External Runtime ownership
+    requirement: The external Runtime MUST retain execution and cognition ownership and an adapter MUST NOT start, control, retry, modify, or own it.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-002"
+    verification: [{method: architecture_review, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ADAPT-003
+    title: Settled source requirement
+    requirement: An adapter MUST publish only after complete explicit success and MUST fail closed for empty, failed, cancelled, interrupted, incomplete, ambiguous, or unsupported outcomes.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-003"
+    verification: [{method: lifecycle_negative_test, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ADAPT-004
+    title: Explicit deterministic adapter request
+    requirement: An adapter MUST accept only the closed request, required identities, exact defaults, and numeric constraints, and MUST NOT derive required inputs from ambient nondeterministic state.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-004"
+    verification: [{method: deterministic_input_test, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ADAPT-005
+    title: Source-authorship attestation
+    requirement: An adapter definition MUST include explicit source-authorship attestation before a source value may enter package cognition.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-005"
+    verification: [{method: contract_test, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ADAPT-006
+    title: Context-only truth-preserving projection
+    requirement: The completed projection MUST use the exact closed projection and record shapes, strict source order, occurrence rule, and context mapping, preserve source identity and revision with empty provenance, and MUST NOT infer roles or causality.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-006"
+    verification: [{method: semantic_boundary_test, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ADAPT-007
+    title: Observation-only MIP output
+    requirement: Adapter output MUST be the exact verified Observation-only MIP, canonical bytes, or artifact envelope requested, with empty derived sections and no transport, timing, usage, provider configuration, raw envelope, or SDK state.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-007"
+    verification: [{method: package_inspection_test, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ADAPT-008
+    title: Deterministic atomic adapter output
+    requirement: Equivalent settled cognition and requests MUST produce byte-identical packages independent of chunking; exact snapshot depth, value, UTF-16-unit, UTF-8-byte, event, and package bounds MUST be enforced; and failure MUST publish no partial output.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-008"
+    verification: [{method: deterministic_atomicity_test, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ADAPT-009
+    title: Stable adapter diagnostics
+    requirement: Adapter failures MUST use the closed adapter code set and MIP failures MUST retain MIP diagnostics.
+    priority: mandatory
+    stability: frozen
+    source: "adapter-contract.md § CCA-MOS-ADAPT-009"
+    verification: [{method: diagnostic_test, evidence: MOS-EVID-ADAPT-001}]
+    evidence_groups: [MOS-EVID-ADAPT-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-CORE-001
+    title: Single Investigation Core authority
+    requirement: The Investigation Core MUST be the only investigation lifecycle, Trace, Replay, Evolution, Comparative, Regression, and Explorer execution implementation used by platform clients.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-001"
+    verification: [{method: architecture_review, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-002
+    title: Isolated Core ownership
+    requirement: One Core instance MUST own isolated state and every Investigation MUST retain one exact Workspace and source kind for its lifetime.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-002"
+    verification: [{method: isolation_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-003
+    title: Closed Core operations
+    requirement: The Core MUST implement the complete operation and action sets, both create forms, exact default Investigation identity, direct-Core MIP and native selection fallbacks, and normative investigation lifecycle.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-003"
+    verification: [{method: operation_matrix_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-004
+    title: Immutable canonical Core values
+    requirement: The Core MUST canonical-clone input, publish recursively immutable values, publish successful Verification Session and public Core Checkpoint values with their exact defined members and content-derived identities, and MUST NOT expose mutable internal state as authority.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-004"
+    verification: [{method: immutability_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-005
+    title: Native derivation fidelity
+    requirement: Native cognition MUST derive and validate Trace, Replay, Evolution, Comparative Reconstruction, and their control states exactly as defined by native-artifacts.md and preserve the specified kind and version identities.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-005"
+    verification: [{method: native_artifact_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-006
+    title: MIP authorship fidelity
+    requirement: MIP-backed investigations MUST expose only verified source-authored artifacts and MUST NOT synthesize missing capability or relabel partial package values as native artifacts.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-006"
+    verification: [{method: package_source_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-007
+    title: Core package boundary
+    requirement: Core package operations MUST delegate MIP meaning to CCA-MIP-1.0 and native export without authored MIP MUST fail rather than synthesize cognition.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-007"
+    verification: [{method: package_boundary_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-008
+    title: Read-only Regression and Explorer
+    requirement: Regression and Explorer MUST append no transition, change no lifecycle, and modify no Investigation.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-008"
+    verification: [{method: read_only_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-009
+    title: Renderer-independent Core
+    requirement: The Core MUST project the exact 22-member complete immutable Investigation value with the defined phase precedence and closed availability keys and conditions without depending on renderer, camera, pixels, route, or presentation cache.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-009"
+    verification: [{method: dependency_boundary_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-010
+    title: Ambient-state independence
+    requirement: Core semantic results MUST NOT depend on randomness, clocks, timers, polling, network, Provider SDKs, filesystem enumeration, or mutable global state.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-010"
+    verification: [{method: deterministic_repeat_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-011
+    title: Core resource bounds
+    requirement: The Core MUST reject more than 10000 transitions or a transition payload whose exact JCS canonical form exceeds 16 * 1024 * 1024 UTF-8 bytes before publication with RESOURCE_LIMIT_EXCEEDED.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-011"
+    verification: [{method: resource_limit_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CORE-012
+    title: Stable atomic Core failure
+    requirement: A Core-originated failure MUST preserve the closed Core error contract, every failure MUST publish no partial result or transition and leave previous state unchanged, and delegated native Trace failures MUST preserve a defined artifact code and message without being required to acquire Core-only operation or diagnostics members.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-core.md § CCA-MOS-CORE-012"
+    verification: [{method: diagnostic_atomicity_test, evidence: MOS-EVID-CORE-001}]
+    evidence_groups: [MOS-EVID-CORE-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-ART-001
+    title: Observation Frame binding
+    requirement: A native producer MUST publish only an immutable canonical MemoryOSObservationFrame version 1.1 with exact envelope, bindings, fingerprint, and world; an assessment of implementation-specific raw projection or Frame-to-Trace semantics MUST identify its native profile, and a cca-studio-native-observation 1.1.0 claim MUST reproduce its published projection and binding contract exactly.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-001"
+    verification: [{method: frame_binding_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-002
+    title: Trace identity and shape
+    requirement: A native Cognitive Trace MUST use kind MemoryOSCognitiveTrace, version 1.1, the defined identity, exact frame and Workspace binding, and ordered non-empty branch and step shapes.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-002"
+    verification: [{method: trace_vector_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-003
+    title: Trace reconstruction
+    requirement: Trace reconstruction MUST apply the declared native profile to resolve one exact complete Reflection from the accepted Frame and preserve its source-authored candidate and evidence order, exact world path/key mapping, four-role branch sequence, and exact world relationships.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-003"
+    verification: [{method: trace_reconstruction_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-004
+    title: Trace validation
+    requirement: Trace validation MUST reproduce the declared snapshot-to-Frame projection where assessed, apply the declared profile to reconstruct the expected Trace, require exact equality and reference closure, and reject incomplete, ambiguous, cross-Workspace, inconsistent, or mutable input without repair.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-004"
+    verification: [{method: trace_negative_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-005
+    title: Replay construction
+    requirement: A native Replay MUST use kind MemoryOSCognitiveReplay, version 1.1, the exact published root and step members, defined Trace-derived identity, role order, first-occurrence node-then-edge ordering, memberships, and terminal target.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-005"
+    verification: [{method: replay_vector_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-006
+    title: Replay state machine
+    requirement: Replay MUST expose only the defined statuses, cursor, six actions, no-op behavior, and exact thirteen-member deterministic completed, current, and future projection.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-006"
+    verification: [{method: replay_state_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-007
+    title: Evolution input binding
+    requirement: Evolution MUST compare only two ordered immutable Observation Frames from one Workspace, session, and stable semantic geography.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-007"
+    verification: [{method: evolution_binding_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-008
+    title: Evolution difference classes
+    requirement: Evolution MUST expose exactly the defined eleven difference classes and classify only nonaggregate, nondetail Long-Term nodes as Evidence and the defined Semantic Transformation, Retrieval, Reflection, and non-contains relationship values.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-008"
+    verification: [{method: evolution_category_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-009
+    title: Evolution comparison and order
+    requirement: Evolution MUST compare stable semantic keys and exact revisions as defined, exclude flowKind from relationship semantics, and lexically order every difference and unchanged-key array.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-009"
+    verification: [{method: evolution_determinism_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-010
+    title: Evolution identity and world
+    requirement: A native Evolution MUST use kind MemoryOSCognitiveEvolution, version 1.1, its exact published root, reference, summary, unchanged, and view members, defined content identity, exact frame references and counts, and one deterministic union world in which the later revision wins.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-010"
+    verification: [{method: evolution_vector_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-011
+    title: Comparative input binding
+    requirement: Comparative Reconstruction MUST accept only two valid bound Traces over ordered frames from one Workspace, session, and stable semantic geography.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-011"
+    verification: [{method: comparative_binding_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-012
+    title: Comparative alignment
+    requirement: Comparative Reconstruction MUST align canonical Replay steps by exact element identity using deterministic longest-common-subsequence alignment and the A-first tie rule.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-012"
+    verification: [{method: comparative_alignment_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-013
+    title: Comparative divergence
+    requirement: Comparative moments MUST use the exact published member set, states, reason codes and reason strings, preserve exact A and B step references, and classify changed revision, role, and direction exactly as defined.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-013"
+    verification: [{method: divergence_vector_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-014
+    title: Comparative value and validation
+    requirement: Comparative construction MUST produce the exact published root, binding, moment, summary, kind, version, content identity, stable world, alignment, and divergence values; detached validation MUST enforce only the published structural, frozen-surface, world-binding, reference, shared-moment, and divergence-index checks.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-014"
+    verification: [{method: comparative_validation_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-015
+    title: Comparative Replay
+    requirement: Comparative Replay MUST expose only the defined state and action contract, pause deterministically on divergence, and expose the exact immutable View and record projection rather than compute the underlying reconstruction.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-015"
+    verification: [{method: comparative_replay_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-ART-016
+    title: Artifact independence and atomicity
+    requirement: Native artifact derivation and validation MUST be independent of renderer, camera, pixels, clock, randomness, and mutable presentation state, and failure MUST publish no partial artifact or state change.
+    priority: mandatory
+    stability: frozen
+    source: "native-artifacts.md § CCA-MOS-ART-016"
+    verification: [{method: boundary_atomicity_test, evidence: MOS-EVID-ART-001}]
+    evidence_groups: [MOS-EVID-ART-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-SDK-001
+    title: SDK facade and Core ownership
+    requirement: One SDK client MUST own one isolated Core lifetime and expose deterministic investigation behavior only through that Core.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-001"
+    verification: [{method: architecture_review, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-002
+    title: SDK version identity
+    requirement: A baseline SDK MUST identify its public contract as version 1.0.0 independently of other version identities.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-002"
+    verification: [{method: version_test, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-003
+    title: Immutable same-client handles
+    requirement: SDK state values MUST be immutable and a value owned by one client or Investigation MUST NOT mutate another.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-003"
+    verification: [{method: ownership_test, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-004
+    title: SDK operation parity
+    requirement: Every conforming binding MUST expose the exact 22-member complete immutable Investigation projection and equivalent common semantic operations, inputs, results, ownership, and effects; refresh and named session wrappers are optional conveniences.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-004"
+    verification: [{method: cross_binding_test, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-005
+    title: Explicit SDK inputs
+    requirement: The SDK MUST require applicable Workspace, declared-profile native Observation, Trace, Reflection, and comparison inputs, publish the exact validated Frame, use the exact Core default for an omitted local Investigation identifier, and MUST NOT discover or infer cognition.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-005"
+    verification: [{method: input_negative_test, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-006
+    title: Exact SDK package transport
+    requirement: SDK package operations MUST preserve exact bytes and native export MUST fail without an authored MIP.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-006"
+    verification: [{method: package_round_trip_test, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-007
+    title: Exact Core forwarding
+    requirement: The SDK MUST forward commands, Regression, and Explorer inputs without implementing semantic or ordering logic.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-007"
+    verification: [{method: dependency_review, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-008
+    title: Cross-binding deterministic equivalence
+    requirement: Equivalent inputs and Core state MUST produce equivalent successful values, bytes, reports, results, ordering, and Core-originated error outcomes across bindings; documented delegated native-profile artifact diagnostics are excluded from cross-binding diagnostic equality.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-008"
+    verification: [{method: language_parity_test, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-009
+    title: SDK error preservation
+    requirement: SDK bindings MUST preserve Core-originated InvestigationCoreError values, deterministically document and apply any delegated native-artifact error mapping, and keep package-verification and binding-transport failure behavior distinguishable.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-009"
+    verification: [{method: error_contract_test, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-SDK-010
+    title: No implicit SDK retry
+    requirement: Binding failure MUST NOT cause an implicit retry or duplicated transition and transport conversion MUST NOT add cognition.
+    priority: mandatory
+    stability: frozen
+    source: "sdk-contract.md § CCA-MOS-SDK-010"
+    verification: [{method: failure_injection_test, evidence: MOS-EVID-SDK-001}]
+    evidence_groups: [MOS-EVID-SDK-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-CLI-001
+    title: CLI executable and commands
+    requirement: The baseline CLI MUST identify as memoryos version 1.0.0 and expose exactly the published top-level command set, empty invocation, and first-token help and version aliases.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-001"
+    verification: [{method: command_inventory_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-002
+    title: SDK-only CLI dependency
+    requirement: Every cognitive CLI operation MUST delegate through the SDK and MUST NOT implement or directly invoke upstream investigation semantics.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-002"
+    verification: [{method: dependency_review, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-003
+    title: Explicit noninteractive CLI
+    requirement: CLI execution MUST require documented explicit inputs and MUST NOT prompt, infer missing state, sample ambient state, or retain cross-process state.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-003"
+    verification: [{method: automation_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-004
+    title: Human and JSON output modes
+    requirement: Every command MUST support deterministic human output and, except raw package output, explicit deterministic JSON output.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-004"
+    verification: [{method: output_mode_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-005
+    title: Deterministic JSON framing
+    requirement: JSON output MUST use compact UTF-8 JSON plus LF, recursively ascending UTF-16 code-unit object keys, SDK array order, exact command-result member and value contracts, and no presentation or nondeterministic data.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-005"
+    verification: [{method: byte_stability_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-006
+    title: Deterministic exit codes
+    requirement: The CLI MUST use only exit codes 0 through 5 with the published mapping and exact ordered failure-classification precedence, and MUST treat Regression detected and Explorer empty as success.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-006"
+    verification: [{method: exit_code_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-007
+    title: Investigation command fidelity
+    requirement: Investigation commands MUST pass exact inputs and preserve SDK state, order, identity, diagnostics, and package bytes without reinterpretation.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-007"
+    verification: [{method: command_conformance_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-008
+    title: Regression and Explorer forwarding
+    requirement: Regression and investigate MUST delegate exact operands and MUST NOT compare, filter, resolve, replay, summarize, explain, rank, or generate evidence locally.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-008"
+    verification: [{method: regression_explorer_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-009
+    title: Session and checkpoint isolation
+    requirement: Session MUST process ordered JSON Lines fail-fast through one SDK client and keep checkpoints opaque and process-local.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-009"
+    verification: [{method: session_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CLI-010
+    title: Output stream integrity
+    requirement: Standalone success MUST use stdout, error MUST use stderr, and raw package export MUST preserve bytes and reject JSON mode.
+    priority: mandatory
+    stability: frozen
+    source: "cli-contract.md § CCA-MOS-CLI-010"
+    verification: [{method: stream_test, evidence: MOS-EVID-CLI-001}]
+    evidence_groups: [MOS-EVID-CLI-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-REG-001
+    title: Read-only compatible Regression operands
+    requirement: Regression MUST compare immutable same-Workspace, same-source-kind Investigations and reject mismatches without changing either operand.
+    priority: mandatory
+    stability: frozen
+    source: "cognitive-regression.md § CCA-MOS-REG-001"
+    verification: [{method: compatibility_and_immutability_test, evidence: MOS-EVID-REG-001}]
+    evidence_groups: [MOS-EVID-REG-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-REG-002
+    title: Regression report identity
+    requirement: A Regression Report MUST have kind MemoryOSCognitiveRegressionReport, version 1.0.0, and deterministic content-derived identity.
+    priority: mandatory
+    stability: frozen
+    source: "cognitive-regression.md § CCA-MOS-REG-002"
+    verification: [{method: report_contract_test, evidence: MOS-EVID-REG-001}]
+    evidence_groups: [MOS-EVID-REG-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-REG-003
+    title: Closed ordered Regression categories
+    requirement: Every report MUST contain exactly replay, reflection, evidence, retrieval, evolution, verification, transition, and lifecycle in that order with status identical or changed.
+    priority: mandatory
+    stability: frozen
+    source: "cognitive-regression.md § CCA-MOS-REG-003"
+    verification: [{method: category_matrix_test, evidence: MOS-EVID-REG-001}]
+    evidence_groups: [MOS-EVID-REG-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-REG-004
+    title: Closed ordered Regression differences
+    requirement: Differences MUST use only added, removed, or modified, preserve exact subject identity, and retain canonical subject order within category.
+    priority: mandatory
+    stability: frozen
+    source: "cognitive-regression.md § CCA-MOS-REG-004"
+    verification: [{method: difference_order_test, evidence: MOS-EVID-REG-001}]
+    evidence_groups: [MOS-EVID-REG-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-REG-005
+    title: Digest-only Regression facts
+    requirement: Before and after facts MUST be domain-separated SHA-256 digests and reports MUST NOT duplicate payload or include interpretation or presentation.
+    priority: mandatory
+    stability: frozen
+    source: "cognitive-regression.md § CCA-MOS-REG-005"
+    verification: [{method: digest_and_content_test, evidence: MOS-EVID-REG-001}]
+    evidence_groups: [MOS-EVID-REG-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-REG-006
+    title: Authoritative Regression fact basis
+    requirement: Regression MUST compare only Core truth and MUST exclude local MIP import aliases, noncognitive package metadata and extensions, and presentation state; the standardized native source descriptor remains part of operand truth.
+    priority: mandatory
+    stability: frozen
+    source: "cognitive-regression.md § CCA-MOS-REG-006"
+    verification: [{method: semantic_boundary_test, evidence: MOS-EVID-REG-001}]
+    evidence_groups: [MOS-EVID-REG-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-REG-007
+    title: Exact Regression overall result
+    requirement: regressionDetected and overall MUST indicate Regression exactly when at least one category changed.
+    priority: mandatory
+    stability: frozen
+    source: "cognitive-regression.md § CCA-MOS-REG-007"
+    verification: [{method: report_consistency_test, evidence: MOS-EVID-REG-001}]
+    evidence_groups: [MOS-EVID-REG-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-REG-008
+    title: Deterministic atomic Regression
+    requirement: Equivalent operands, including equal standardized source descriptors, MUST produce byte-equivalent report content and invalid operands MUST fail without partial report using stable errors.
+    priority: mandatory
+    stability: frozen
+    source: "cognitive-regression.md § CCA-MOS-REG-008"
+    verification: [{method: deterministic_atomicity_test, evidence: MOS-EVID-REG-001}]
+    evidence_groups: [MOS-EVID-REG-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-EXPL-001
+    title: Existing-report Explorer navigation
+    requirement: Explorer MUST validate and navigate one existing Regression Report without loading, executing, replaying, comparing, or modifying source Investigations.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-explorer.md § CCA-MOS-EXPL-001"
+    verification: [{method: navigation_boundary_test, evidence: MOS-EVID-EXPL-001}]
+    evidence_groups: [MOS-EVID-EXPL-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-EXPL-002
+    title: Closed Explorer query
+    requirement: Explorer queries MUST use exactly the three published nullable selectors and reject unknown, empty, contradictory, or incompatible selection.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-explorer.md § CCA-MOS-EXPL-002"
+    verification: [{method: query_matrix_test, evidence: MOS-EVID-EXPL-001}]
+    evidence_groups: [MOS-EVID-EXPL-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-EXPL-003
+    title: Lexical transition normalization
+    requirement: Transition selection MUST normalize only documented lexical forms and MUST NOT infer a transition absent from the report.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-explorer.md § CCA-MOS-EXPL-003"
+    verification: [{method: normalization_test, evidence: MOS-EVID-EXPL-001}]
+    evidence_groups: [MOS-EVID-EXPL-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-EXPL-004
+    title: Explorer result identity
+    requirement: Explorer results MUST use kind MemoryOSCognitiveInvestigationResult, version 1.0.0, deterministic identity, exact source identities, closed status, and exact match count.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-explorer.md § CCA-MOS-EXPL-004"
+    verification: [{method: result_contract_test, evidence: MOS-EVID-EXPL-001}]
+    evidence_groups: [MOS-EVID-EXPL-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-EXPL-005
+    title: Deterministic Explorer match order
+    requirement: Matches MUST retain Regression category and difference order with contiguous indices and an unmatched valid query MUST return empty.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-explorer.md § CCA-MOS-EXPL-005"
+    verification: [{method: navigation_order_test, evidence: MOS-EVID-EXPL-001}]
+    evidence_groups: [MOS-EVID-EXPL-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-EXPL-006
+    title: Exact Explorer evidence endpoints
+    requirement: Every match endpoint MUST point through an RFC 6901-compatible path to an existing report digest with side cardinality matching added, removed, or modified.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-explorer.md § CCA-MOS-EXPL-006"
+    verification: [{method: pointer_resolution_test, evidence: MOS-EVID-EXPL-001}]
+    evidence_groups: [MOS-EVID-EXPL-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-EXPL-007
+    title: No alternate Explorer cognition
+    requirement: Explorer MUST terminate at report evidence and MUST NOT copy payload, construct evidence, rank, summarize, explain, or infer causality.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-explorer.md § CCA-MOS-EXPL-007"
+    verification: [{method: semantic_boundary_review, evidence: MOS-EVID-EXPL-001}]
+    evidence_groups: [MOS-EVID-EXPL-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-EXPL-008
+    title: Deterministic atomic Explorer failure
+    requirement: Equivalent input MUST produce byte-equivalent immutable results and malformed reports or queries MUST fail atomically with the published codes.
+    priority: mandatory
+    stability: frozen
+    source: "investigation-explorer.md § CCA-MOS-EXPL-008"
+    verification: [{method: deterministic_atomicity_test, evidence: MOS-EVID-EXPL-001}]
+    evidence_groups: [MOS-EVID-EXPL-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-CONF-001
+    title: Complete conformance coverage
+    requirement: A complete claim MUST report every CCA-MOS requirement and both incorporated requirement ranges without waiver or NOT APPLICABLE.
+    priority: mandatory
+    stability: frozen
+    source: "conformance.md § CCA-MOS-CONF-001"
+    verification: [{method: conformance_report_validation, evidence: MOS-EVID-CONF-001}]
+    evidence_groups: [MOS-EVID-CONF-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CONF-002
+    title: Scoped claim labeling
+    requirement: A scoped assessment MUST name its profiles, report exactly one row for every requirement in the resolved registry, mark applicable rows PASS or FAIL, justify every non-applicable row as NOT APPLICABLE, and MUST NOT claim complete conformance.
+    priority: mandatory
+    stability: frozen
+    source: "conformance.md § CCA-MOS-CONF-002"
+    verification: [{method: report_schema_test, evidence: MOS-EVID-CONF-001}]
+    evidence_groups: [MOS-EVID-CONF-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CONF-003
+    title: Deterministic conformance evidence
+    requirement: Automated evidence MUST be reproducible from versioned inputs and deterministic across irrelevant environment and presentation variation.
+    priority: mandatory
+    stability: frozen
+    source: "conformance.md § CCA-MOS-CONF-003"
+    verification: [{method: reproducibility_test, evidence: MOS-EVID-CONF-001}]
+    evidence_groups: [MOS-EVID-CONF-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CONF-004
+    title: Attributable evidence manifest
+    requirement: Every result MUST reference evidence identifying the target, version, requirements, method, inputs, expected and observed outcomes, and durable result.
+    priority: mandatory
+    stability: frozen
+    source: "conformance.md § CCA-MOS-CONF-004"
+    verification: [{method: evidence_manifest_validation, evidence: MOS-EVID-CONF-001}]
+    evidence_groups: [MOS-EVID-CONF-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CONF-005
+    title: Closed conformance result vocabulary
+    requirement: Every requirement row MUST use PASS, FAIL, or NOT APPLICABLE and missing or incomplete evidence MUST be FAIL.
+    priority: mandatory
+    stability: frozen
+    source: "conformance.md § CCA-MOS-CONF-005"
+    verification: [{method: report_validation, evidence: MOS-EVID-CONF-001}]
+    evidence_groups: [MOS-EVID-CONF-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CONF-006
+    title: No schema-only semantic evidence
+    requirement: Schema validation alone MUST NOT satisfy behavior, semantic, ordering, lifecycle, identity, ownership, atomicity, or compatibility requirements.
+    priority: mandatory
+    stability: frozen
+    source: "conformance.md § CCA-MOS-CONF-006"
+    verification: [{method: evidence_review, evidence: MOS-EVID-CONF-001}]
+    evidence_groups: [MOS-EVID-CONF-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-CONF-007
+    title: Complete conformance claim identity
+    requirement: A claim MUST identify all Standard, suite, target, applicable native projection profile, incorporated publication, scope, evidence, assessor, date, and failure fields defined by the conformance specification.
+    priority: mandatory
+    stability: frozen
+    source: "conformance.md § CCA-MOS-CONF-007"
+    verification: [{method: report_schema_test, evidence: MOS-EVID-CONF-001}]
+    evidence_groups: [MOS-EVID-CONF-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-COMP-001
+    title: Observable behavioral compatibility
+    requirement: Behavioral compatibility MUST be based on equivalent standard-defined outcomes and MUST NOT be established by implementation, renderer, layout, timing, or pixel similarity.
+    priority: mandatory
+    stability: frozen
+    source: "compatibility.md § CCA-MOS-COMP-001"
+    verification: [{method: compatibility_test, evidence: MOS-EVID-COMP-001}]
+    evidence_groups: [MOS-EVID-COMP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-COMP-002
+    title: Backward-compatible evolution
+    requirement: A backward-compatible revision MUST accept prior valid input and preserve its meaning and deterministic outcomes.
+    priority: mandatory
+    stability: frozen
+    source: "compatibility.md § CCA-MOS-COMP-002"
+    verification: [{method: prior_vector_test, evidence: MOS-EVID-COMP-001}]
+    evidence_groups: [MOS-EVID-COMP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-COMP-003
+    title: Closed-contract forward handling
+    requirement: Unknown majors, required features, or closed-contract members MUST be rejected or reported unsupported and MUST NOT be guessed.
+    priority: mandatory
+    stability: frozen
+    source: "compatibility.md § CCA-MOS-COMP-003"
+    verification: [{method: unknown_version_test, evidence: MOS-EVID-COMP-001}]
+    evidence_groups: [MOS-EVID-COMP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-COMP-004
+    title: Incorporated MIP compatibility
+    requirement: MIP compatibility MUST follow the incorporated same-major, extension-preservation, critical-extension, and unknown-major rules.
+    priority: mandatory
+    stability: frozen
+    source: "compatibility.md § CCA-MOS-COMP-004"
+    verification: [{method: mip_compatibility_test, evidence: MOS-EVID-COMP-001}]
+    evidence_groups: [MOS-EVID-COMP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-COMP-005
+    title: Independent compatibility identities
+    requirement: Compatibility MUST be evaluated against each declared contract version and MUST NOT be inferred from version-number equality or inequality.
+    priority: mandatory
+    stability: frozen
+    source: "compatibility.md § CCA-MOS-COMP-005"
+    verification: [{method: version_boundary_review, evidence: MOS-EVID-COMP-001}]
+    evidence_groups: [MOS-EVID-COMP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-COMP-006
+    title: No silent compatibility conversion
+    requirement: Compatibility MUST NOT be claimed through silent repair, normalization, downgrade, discard, synthesis, or reinterpretation.
+    priority: mandatory
+    stability: frozen
+    source: "compatibility.md § CCA-MOS-COMP-006"
+    verification: [{method: negative_compatibility_test, evidence: MOS-EVID-COMP-001}]
+    evidence_groups: [MOS-EVID-COMP-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+
+  - id: CCA-MOS-VER-001
+    title: Independent version declarations
+    requirement: Every component and claim MUST declare its own applicable version and MUST NOT substitute another component or product version.
+    priority: mandatory
+    stability: frozen
+    source: "versioning.md § CCA-MOS-VER-001"
+    verification: [{method: version_inventory_test, evidence: MOS-EVID-VER-001}]
+    evidence_groups: [MOS-EVID-VER-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-VER-002
+    title: Baseline contract version fidelity
+    requirement: A baseline claim MUST honor the published baseline contract versions or identify a later version with verified compatibility.
+    priority: mandatory
+    stability: frozen
+    source: "versioning.md § CCA-MOS-VER-002"
+    verification: [{method: baseline_version_test, evidence: MOS-EVID-VER-001}]
+    evidence_groups: [MOS-EVID-VER-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-VER-003
+    title: Incompatible Standard change classification
+    requirement: A change to accepted input, deterministic outcome, ownership, identity, ordering, lifecycle, compatibility, or passing evidence MUST publish a new Standard major version.
+    priority: mandatory
+    stability: frozen
+    source: "versioning.md § CCA-MOS-VER-003"
+    verification: [{method: change_control_review, evidence: MOS-EVID-VER-001}]
+    evidence_groups: [MOS-EVID-VER-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-VER-004
+    title: Compatible Standard change classification
+    requirement: A Standard minor version MUST preserve prior valid behavior and publish complete requirements, compatibility, evidence, and history for additions.
+    priority: mandatory
+    stability: frozen
+    source: "versioning.md § CCA-MOS-VER-004"
+    verification: [{method: change_control_review, evidence: MOS-EVID-VER-001}]
+    evidence_groups: [MOS-EVID-VER-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []
+  - id: CCA-MOS-VER-005
+    title: Assessment and Reference Implementation versioning
+    requirement: Suite, report, and Reference Implementation MUST identify their versions and exact assessed publications and MUST NOT rewrite earlier assessments or treat version equality as conformance.
+    priority: mandatory
+    stability: frozen
+    source: "versioning.md § CCA-MOS-VER-005"
+    verification: [{method: publication_review, evidence: MOS-EVID-VER-001}]
+    evidence_groups: [MOS-EVID-VER-001]
+    implementation_milestone: MO-1208
+    status: approved
+    adr: []

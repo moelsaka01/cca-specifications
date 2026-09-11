@@ -29,6 +29,8 @@ until an authorized decision is recorded.
 |---|---|
 | [`specifications/CCA-ENG-1.0/`](specifications/CCA-ENG-1.0/) | Engineering Handbook and lifecycle governance |
 | [`specifications/CCA-RF-1.0/`](specifications/CCA-RF-1.0/) | Runtime Foundation Standard and machine-readable requirements |
+| [`specifications/CCA-MIP-1.0/`](specifications/CCA-MIP-1.0/) | Memory Investigation Package format, validation, examples, and conformance |
+| [`specifications/CCA-MEMORYOS-1.0/`](specifications/CCA-MEMORYOS-1.0/) | Published MemoryOS platform behavior, compatibility, versioning, and conformance Standard |
 | [`adrs/`](adrs/) | Architectural Decision Record process and repository template |
 | [`templates/`](templates/) | Reusable standard, ADR, and requirement templates |
 | [`governance/`](governance/) | Authority, change control, traceability, and publication policy |
@@ -40,6 +42,18 @@ until an authorized decision is recorded.
 - [CCA-RF-1.0 machine-readable requirements](specifications/CCA-RF-1.0/requirements.yaml)
 - [CCA-RF-1.0 approved decisions](specifications/CCA-RF-1.0/decisions.md)
 - [CCA-RF-1.0 conformance standard](specifications/CCA-RF-1.0/conformance.md)
+- [CCA-MIP-1.0 Memory Investigation Package](specifications/CCA-MIP-1.0/MIP-001.md)
+- [CCA-MIP-1.0 machine-readable schema](specifications/CCA-MIP-1.0/schema/memory-investigation-package-1.0.schema.json)
+- [CCA-MIP-1.0 reference examples](specifications/CCA-MIP-1.0/examples/README.md)
+- [CCA-MEMORYOS-1.0 MemoryOS Standard](specifications/CCA-MEMORYOS-1.0/README.md)
+- [CCA-MEMORYOS-1.0 normative requirements](specifications/CCA-MEMORYOS-1.0/requirements.yaml)
+- [CCA-MEMORYOS-1.0 conformance specification](specifications/CCA-MEMORYOS-1.0/conformance.md)
+
+The informative
+[Reference Implementation guide](specifications/CCA-MEMORYOS-1.0/reference-implementation.md)
+identifies MemoryOS 1.2.0 as the initial implementation assessed against
+CCA-MEMORYOS-1.0. That designation does not make implementation source,
+documentation, or tests normative.
 
 Normative statements use **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**,
 and **MAY**. `MUST` and `MUST NOT` state requirements for conformance.

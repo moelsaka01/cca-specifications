@@ -1,0 +1,1235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:memoryos:mip:schema:1.0.0",
+  "title": "Memory Investigation Package 1.0",
+  "description": "Machine-readable structural contract for a MemoryOS Memory Investigation Package (.mip). Cross-record derivation, ordering, digest, compatibility, and prohibited-content rules are defined normatively by MIP-001.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "kind",
+    "formatVersion",
+    "manifest",
+    "metadata",
+    "observations",
+    "traces",
+    "replays",
+    "evolutions",
+    "comparativeReconstructions",
+    "extensions",
+    "verification",
+    "integrity"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "urn:memoryos:mip:schema:1.0.0"
+    },
+    "kind": {
+      "const": "MemoryInvestigationPackage"
+    },
+    "formatVersion": {
+      "type": "string",
+      "pattern": "^1\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "manifest": {
+      "$ref": "#/$defs/manifest"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/observation"
+      }
+    },
+    "traces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/trace"
+      }
+    },
+    "replays": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/replay"
+      }
+    },
+    "evolutions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evolution"
+      }
+    },
+    "comparativeReconstructions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/comparativeReconstruction"
+      }
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    },
+    "verification": {
+      "$ref": "#/$defs/verification"
+    },
+    "integrity": {
+      "$ref": "#/$defs/integrity"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "nullableDigest": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "semanticRole": {
+      "enum": [
+        "evidence",
+        "semanticTransformation",
+        "retrieval",
+        "reflection",
+        "context"
+      ]
+    },
+    "traceRole": {
+      "enum": [
+        "originEvidence",
+        "semanticTransformation",
+        "retrieval",
+        "reflectionCurrent"
+      ]
+    },
+    "direction": {
+      "oneOf": [
+        {
+          "enum": [
+            "forward",
+            "reverse"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "canonicalValue": {
+      "description": "A value in the canonical JSON data model. Canonical byte encoding and prohibited semantic content are governed by MIP-001.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "number",
+              "not": {
+                "type": "integer"
+              }
+            }
+          ]
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/canonicalValue"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/canonicalValue"
+          }
+        }
+      ]
+    },
+    "semanticRevision": {
+      "description": "The detached, authoritative semantic payload for one observed revision. It is intentionally open to the source semantic contract; presentation and controller state remain prohibited by MIP-001.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/canonicalValue"
+      }
+    },
+    "typedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "identifier",
+        "occurrence"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/identifier"
+        },
+        "identifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "occurrence": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "packageIdentifier",
+        "workspaceIdentifier",
+        "profiles",
+        "features",
+        "inventory"
+      ],
+      "properties": {
+        "packageIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "workspaceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "profiles": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "canonicalization",
+            "digest",
+            "validation"
+          ],
+          "properties": {
+            "canonicalization": {
+              "const": "RFC8785"
+            },
+            "digest": {
+              "const": "SHA-256"
+            },
+            "validation": {
+              "const": "MIP-CORE-1.0"
+            }
+          }
+        },
+        "features": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required",
+            "optional"
+          ],
+          "properties": {
+            "required": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "optional": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "inventory": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "observations",
+            "traces",
+            "replays",
+            "evolutions",
+            "comparativeReconstructions"
+          ],
+          "properties": {
+            "observations": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/nonNegativeInteger"
+                },
+                {
+                  "minimum": 1
+                }
+              ]
+            },
+            "traces": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            },
+            "replays": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            },
+            "evolutions": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            },
+            "comparativeReconstructions": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "producer",
+        "source"
+      ],
+      "properties": {
+        "producer": {
+          "$ref": "#/$defs/productIdentity"
+        },
+        "source": {
+          "$ref": "#/$defs/productIdentity"
+        },
+        "exportedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+        }
+      }
+    },
+    "productIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "role",
+        "provenance",
+        "revision"
+      ],
+      "properties": {
+        "reference": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "role": {
+          "$ref": "#/$defs/semanticRole"
+        },
+        "provenance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/provenanceLink"
+          }
+        },
+        "revision": {
+          "$ref": "#/$defs/semanticRevision"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "enum": [
+                  "evidence",
+                  "context"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "provenance": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "semanticTransformation"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "provenance": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "retrieval"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "provenance": {
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "reflection"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "provenance": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "provenanceLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "relationship"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "relationship": {
+          "$ref": "#/$defs/typedReference"
+        }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "relationshipType",
+        "from",
+        "to",
+        "revision"
+      ],
+      "properties": {
+        "reference": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "relationshipType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "to": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "revision": {
+          "$ref": "#/$defs/semanticRevision"
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "sequence",
+        "workspaceIdentifier",
+        "records",
+        "relationships"
+      ],
+      "properties": {
+        "identifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sequence": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "workspaceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "records": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/record"
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationship"
+          }
+        }
+      }
+    },
+    "traceStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "role",
+        "node",
+        "relationship",
+        "direction"
+      ],
+      "properties": {
+        "index": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "role": {
+          "$ref": "#/$defs/traceRole"
+        },
+        "node": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "relationship": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/typedReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "direction": {
+          "$ref": "#/$defs/direction"
+        }
+      }
+    },
+    "traceBranch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "steps"
+      ],
+      "properties": {
+        "index": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 4,
+          "items": {
+            "$ref": "#/$defs/traceStep"
+          }
+        }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "observationIdentifier",
+        "workspaceIdentifier",
+        "target",
+        "branches"
+      ],
+      "properties": {
+        "identifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "observationIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "workspaceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "target": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "branches": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/traceBranch"
+          }
+        }
+      }
+    },
+    "replayStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "elementType",
+        "node",
+        "relationship",
+        "role",
+        "direction"
+      ],
+      "properties": {
+        "index": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "elementType": {
+          "enum": [
+            "node",
+            "relationship"
+          ]
+        },
+        "node": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/typedReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "relationship": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/typedReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "role": {
+          "$ref": "#/$defs/traceRole"
+        },
+        "direction": {
+          "$ref": "#/$defs/direction"
+        }
+      }
+    },
+    "replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "traceIdentifier",
+        "observationIdentifier",
+        "workspaceIdentifier",
+        "steps"
+      ],
+      "properties": {
+        "identifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "traceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "observationIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "workspaceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/replayStep"
+          }
+        }
+      }
+    },
+    "differenceKind": {
+      "enum": [
+        "addedEvidence",
+        "removedEvidence",
+        "addedRelationship",
+        "removedRelationship",
+        "modifiedRelationship",
+        "addedSemanticTransformation",
+        "removedSemanticTransformation",
+        "addedRetrieval",
+        "removedRetrieval",
+        "addedReflection",
+        "removedReflection"
+      ]
+    },
+    "evolutionDifference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "kind",
+        "subject",
+        "beforeRevisionDigest",
+        "afterRevisionDigest"
+      ],
+      "properties": {
+        "index": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "kind": {
+          "$ref": "#/$defs/differenceKind"
+        },
+        "subject": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "beforeRevisionDigest": {
+          "$ref": "#/$defs/nullableDigest"
+        },
+        "afterRevisionDigest": {
+          "$ref": "#/$defs/nullableDigest"
+        }
+      }
+    },
+    "evolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "fromObservationIdentifier",
+        "toObservationIdentifier",
+        "workspaceIdentifier",
+        "differences"
+      ],
+      "properties": {
+        "identifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "fromObservationIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "toObservationIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "workspaceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "differences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evolutionDifference"
+          }
+        }
+      }
+    },
+    "comparativeSide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "elementType",
+        "reference",
+        "role",
+        "direction",
+        "revisionDigest"
+      ],
+      "properties": {
+        "elementType": {
+          "enum": [
+            "node",
+            "relationship"
+          ]
+        },
+        "reference": {
+          "$ref": "#/$defs/typedReference"
+        },
+        "role": {
+          "$ref": "#/$defs/traceRole"
+        },
+        "direction": {
+          "$ref": "#/$defs/direction"
+        },
+        "revisionDigest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "nullableComparativeSide": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/comparativeSide"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "comparativeMoment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "state",
+        "reasonCodes",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "index": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "state": {
+          "enum": [
+            "shared",
+            "aOnly",
+            "bOnly",
+            "modified"
+          ]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "A_ONLY",
+              "B_ONLY",
+              "SEMANTIC_REVISION_CHANGED",
+              "RELATIONSHIP_REVISION_CHANGED",
+              "TRACE_BINDING_CHANGED"
+            ]
+          }
+        },
+        "from": {
+          "$ref": "#/$defs/nullableComparativeSide"
+        },
+        "to": {
+          "$ref": "#/$defs/nullableComparativeSide"
+        }
+      }
+    },
+    "comparativeReconstruction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "fromObservationIdentifier",
+        "toObservationIdentifier",
+        "fromTraceIdentifier",
+        "toTraceIdentifier",
+        "evolutionIdentifier",
+        "workspaceIdentifier",
+        "moments",
+        "divergenceIndices"
+      ],
+      "properties": {
+        "identifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "fromObservationIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "toObservationIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "fromTraceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "toTraceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "evolutionIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "workspaceIdentifier": {
+          "$ref": "#/$defs/identifier"
+        },
+        "moments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/comparativeMoment"
+          }
+        },
+        "divergenceIndices": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonNegativeInteger"
+          }
+        }
+      }
+    },
+    "extension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "critical",
+        "payload"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "payload": {
+          "$ref": "#/$defs/canonicalValue"
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?){2,}$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/extension"
+      }
+    },
+    "verificationCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "status"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "passed"
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "status",
+        "checks"
+      ],
+      "properties": {
+        "profile": {
+          "const": "MIP-CORE-1.0"
+        },
+        "status": {
+          "const": "passed"
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/verificationCheck"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "STRUCTURE"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/verificationCheck"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "CANONICAL_BYTES"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/verificationCheck"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "INTEGRITY"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/verificationCheck"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "REFERENCE_CLOSURE"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/verificationCheck"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "DETERMINISTIC_DERIVATIONS"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/verificationCheck"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "PROHIBITED_CONTENT"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        }
+      }
+    },
+    "sectionDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "digest"
+      ],
+      "properties": {
+        "name": {
+          "enum": [
+            "manifest",
+            "metadata",
+            "observations",
+            "traces",
+            "replays",
+            "evolutions",
+            "comparativeReconstructions",
+            "extensions",
+            "verification"
+          ]
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "sectionDigests",
+        "cognitionDigest",
+        "packageDigest"
+      ],
+      "properties": {
+        "profile": {
+          "const": "MIP-SHA-256-1.0"
+        },
+        "sectionDigests": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "manifest"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "metadata"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "observations"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "traces"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "replays"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "evolutions"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "comparativeReconstructions"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "extensions"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/sectionDigest"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "verification"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        },
+        "cognitionDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "packageDigest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    }
+  }
+}

@@ -34,6 +34,18 @@ an open public standards project:
 
 These are governance decisions, not implementation milestones.
 
+## MemoryOS Standard 1.0
+
+Status: published on 2026-09-04 through MO-1208.
+
+[CCA-MEMORYOS-1.0](specifications/CCA-MEMORYOS-1.0/README.md) freezes the
+existing deterministic MemoryOS platform behavior, incorporates the exact
+CCA-RF-1.0 and CCA-MIP-1.0 requirement sets by reference, and defines
+implementation-independent conformance, compatibility, versioning, and
+certification. It introduces no new MemoryOS behavior.
+Its informative Reference Implementation guide identifies MemoryOS 1.2.0 as
+the initial assessed implementation; the Standard remains authoritative.
+
 ## Future specification work
 
 Future work may proceed only from approved architecture and accepted ADRs.

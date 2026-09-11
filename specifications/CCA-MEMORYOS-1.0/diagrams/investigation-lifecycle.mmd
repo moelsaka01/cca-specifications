@@ -1,0 +1,31 @@
+stateDiagram-v2
+    [*] --> Created: create
+    Created --> Observed: observe / import
+    Observed --> Observed: observe
+    Observed --> Traced: select exact Reflection or authored Trace
+    Traced --> ReplayReady: prepare authored or deterministic Replay
+    ReplayReady --> Replaying: replay action
+    Replaying --> Replaying: replay action
+    Replaying --> ReplayComplete: final step
+    ReplayComplete --> ComparisonReady: enter Evolution
+    ComparisonReady --> ComparisonReady: move observation pair
+    ComparisonReady --> Comparing: start Comparative Reconstruction
+    Comparing --> Comparing: comparative action
+    Comparing --> ComparisonReady: back
+    ComparisonReady --> ReplayComplete: back / restore comparison checkpoint
+    Created --> Verified: verify
+    Observed --> Verified: verify
+    ReplayReady --> Verified: verify
+    Replaying --> Verified: verify
+    ReplayComplete --> Verified: verify
+    ComparisonReady --> Verified: verify
+    Comparing --> Verified: verify
+    Verified --> Archived: archive
+    Created --> Archived: archive
+    Observed --> Archived: archive
+    ReplayReady --> Archived: archive
+    Replaying --> Archived: archive
+    ReplayComplete --> Archived: archive
+    ComparisonReady --> Archived: archive
+    Comparing --> Archived: archive
+    Archived --> [*]

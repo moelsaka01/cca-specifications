@@ -1,0 +1,37 @@
+flowchart TB
+    Source["Accepted detached MemoryOS cognition"] --> Observation["Observation(s)<br/>authoritative semantic payload"]
+
+    subgraph MIP["Memory Investigation Package .mip"]
+        Manifest["Manifest + technical metadata"]
+        Observation
+        Trace["Cognitive Trace(s)<br/>typed references only"]
+        Replay["Cognitive Replay plan(s)<br/>typed references only"]
+        Evolution["Cognitive Evolution(s)<br/>semantic differences only"]
+        Comparative["Comparative Reconstruction(s)<br/>aligned moments only"]
+        Extensions["Namespaced extensions"]
+        Verification["Verification evidence"]
+        Integrity["Section + cognition + package digests"]
+    end
+
+    Observation --> Trace
+    Trace --> Replay
+    Observation --> Evolution
+    Trace --> Comparative
+    Evolution --> Comparative
+
+    Manifest --> Integrity
+    Observation --> Integrity
+    Trace --> Integrity
+    Replay --> Integrity
+    Evolution --> Integrity
+    Comparative --> Integrity
+    Extensions --> Integrity
+    Verification --> Integrity
+
+    classDef payload fill:#123a31,stroke:#35d07f,color:#fff
+    classDef derived fill:#172c46,stroke:#48a8ff,color:#fff
+    classDef envelope fill:#30234d,stroke:#a984ff,color:#fff
+    class Observation payload
+    class Trace,Replay,Evolution,Comparative derived
+    class Manifest,Extensions,Verification,Integrity envelope
+
